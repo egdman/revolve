@@ -56,4 +56,98 @@ class YamlToRobot:
         return robot
 
 
-    def get_yaml(selfself, pbRobot):
+# testing:
+ #   def get_yaml(selfself, pbRobot):
+    def get_yaml(self, stream):
+
+        bot_yaml = '''
+---
+!!map {
+  ? !!str "body"
+  : !!map {
+    ? !!str "children"
+    : !!map {
+      ? !!int "1"
+      : !!map {
+        ? !!str "id"
+        : !!str "Hinge",
+        ? !!str "params"
+        : !!map {
+          ? !!str "blue"
+          : !!float "0.0",
+          ? !!str "green"
+          : !!float "0.0",
+          ? !!str "length"
+          : !!float "0.5",
+          ? !!str "red"
+          : !!float "1.0",
+        },
+        ? !!str "type"
+        : !!str "Hinge",
+      },
+      ? !!int "4"
+      : !!map {
+        ? !!str "id"
+        : !!str "Wheel",
+        ? !!str "params"
+        : !!map {
+          ? !!str "blue"
+          : !!float "0.0",
+          ? !!str "green"
+          : !!float "1.0",
+          ? !!str "red"
+          : !!float "0.0",
+        },
+        ? !!str "type"
+        : !!str "Wheel",
+      },
+      ? !!int "5"
+      : !!map {
+        ? !!str "id"
+        : !!str "Wheel2",
+        ? !!str "params"
+        : !!map {
+          ? !!str "blue"
+          : !!float "0.0",
+          ? !!str "green"
+          : !!float "1.0",
+          ? !!str "red"
+          : !!float "0.0",
+        },
+        ? !!str "type"
+        : !!str "Wheel",
+      },
+    },
+    ? !!str "id"
+    : !!str "Core",
+    ? !!str "type"
+    : !!str "Core",
+  },
+  ? !!str "brain"
+  : !!map {
+    ? !!str "params"
+    : !!map {
+      ? !!str "Wheel-out-0"
+      : !!map {
+        ? !!str "period"
+        : !!int "3",
+        ? !!str "type"
+        : !!str "Oscillator",
+      },
+      ? !!str "Wheel2-out-0"
+      : !!map {
+        ? !!str "period"
+        : !!int "3",
+        ? !!str "type"
+        : !!str "Oscillator",
+      },
+    },
+  },
+}
+        '''
+
+        bot_pb = yaml_to_robot(self.body_spec, self.nn_spec, bot_yaml)
+        body = bot_pb.body
+        brain = bot_pb.brain
+        yaml.dump_all([body, brain], stream)
+        return 0
