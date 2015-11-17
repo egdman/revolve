@@ -54,3 +54,6 @@ class YamlToRobot:
         robot.body.CopyFrom(self.body_decoder.decode(obj))
         robot.brain.CopyFrom(self.brain_decoder.decode(obj))
         return robot
+
+
+    def get_yaml(selfself, pbRobot):
