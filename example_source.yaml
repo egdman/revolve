@@ -1,0 +1,34 @@
+body:
+  id          : Core
+  type        : Core
+  children:
+    1:
+      id: Hinge
+      type: Hinge
+      params:
+        length: 0.5
+        red: 1.0
+        green: 0.0
+        blue: 0.0
+    4:
+      id: Wheel
+      type: Wheel
+      params:
+        red: 0.0
+        green: 1.0
+        blue: 0.0
+    5:
+      id: Wheel2
+      type: Wheel
+      params:
+        red: 0.0
+        green: 1.0
+        blue: 0.0
+brain:
+  params:
+    Wheel-out-0:
+      type: Oscillator
+      period: 3
+    Wheel2-out-0:
+      type: Oscillator
+      period: 3
