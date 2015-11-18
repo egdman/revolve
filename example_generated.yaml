@@ -1,0 +1,42 @@
+body:
+  children:
+    1:
+      children: {}
+      id: !!python/unicode 'Hinge'
+      label: !!python/unicode ''
+      orientation: 0
+      params: {blue: 0.0, green: 0.0, length: 0.5, red: 1.0}
+      slot: 0
+      type: !!python/unicode 'Hinge'
+    4:
+      children: {}
+      id: !!python/unicode 'Wheel'
+      label: !!python/unicode ''
+      orientation: 0
+      params: {blue: 0.0, green: 1.0, red: 0.0}
+      slot: 0
+      type: !!python/unicode 'Wheel'
+    5:
+      children: {}
+      id: !!python/unicode 'Wheel2'
+      label: !!python/unicode ''
+      orientation: 0
+      params: {blue: 0.0, green: 1.0, red: 0.0}
+      slot: 0
+      type: !!python/unicode 'Wheel'
+  id: !!python/unicode 'Core'
+  label: !!python/unicode ''
+  orientation: 0
+  params: {blue: 0.5, green: 0.5, red: 0.5}
+  type: !!python/unicode 'Core'
+brain: !!python/object/apply:revolve.spec.msgs.neural_net_pb2.NeuralNetwork
+  state:
+    serialized: !!binary |
+      Ch8KCUNvcmUtaW4tNBIFaW5wdXQaBUlucHV0IgRDb3JlCh8KCUNvcmUtaW4tNRIFaW5wdXQaBUlu
+      cHV0IgRDb3JlCksKDFdoZWVsMi1vdXQtMBIGb3V0cHV0GgpPc2NpbGxhdG9yIgZXaGVlbDIqCQkA
+      AAAAAAAIQCoJCQAAAAAAAAAAKgkJAAAAAAAA8D8KHwoJQ29yZS1pbi0xEgVpbnB1dBoFSW5wdXQi
+      BENvcmUKHwoJQ29yZS1pbi0wEgVpbnB1dBoFSW5wdXQiBENvcmUKHwoJQ29yZS1pbi0zEgVpbnB1
+      dBoFSW5wdXQiBENvcmUKHwoJQ29yZS1pbi0yEgVpbnB1dBoFSW5wdXQiBENvcmUKSQoLV2hlZWwt
+      b3V0LTASBm91dHB1dBoKT3NjaWxsYXRvciIFV2hlZWwqCQkAAAAAAAAIQCoJCQAAAAAAAAAAKgkJ
+      AAAAAAAA8D8=
+id: 0

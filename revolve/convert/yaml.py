@@ -5,7 +5,7 @@ import yaml
 from ..spec import BodyImplementation, NeuralNetImplementation
 from ..spec.msgs import *
 from .decode import BodyDecoder, NeuralNetworkDecoder
-
+from .proto_to_yaml import BodyEncoder
 
 def yaml_to_robot(body_spec, nn_spec, yaml):
     """
@@ -38,6 +38,8 @@ class YamlToRobot:
         self.body_decoder = BodyDecoder(body_spec)
         self.brain_decoder = NeuralNetworkDecoder(nn_spec, body_spec)
 
+        self.body_encoder = BodyEncoder(body_spec)
+
     def get_protobuf(self, stream):
         """
         Returns a protobuf `Robot` for the given stream.
@@ -67,7 +69,7 @@ class YamlToRobot:
         brain = bot_pb.brain
 
         bot_yaml['id'] = id
-        bot_yaml['body'] = body
+        bot_yaml['body'] = self.body_encoder.parse_body(body.root)
         bot_yaml['brain'] = brain
 
 

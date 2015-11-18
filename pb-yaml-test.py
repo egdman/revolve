@@ -92,5 +92,5 @@ bot_pb = yaml_to_robot(body_spec, brain_spec, bot_yaml)
 
 pbt = YamlToRobot(body_spec, brain_spec)
 
-outFile = file('rbt.yaml', 'w')
+outFile = file('example_generated.yaml', 'w')
 pbt.get_yaml(bot_pb, outFile)
