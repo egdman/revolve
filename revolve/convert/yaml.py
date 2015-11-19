@@ -5,7 +5,7 @@ import yaml
 from ..spec import BodyImplementation, NeuralNetImplementation
 from ..spec.msgs import *
 from .decode import BodyDecoder, NeuralNetworkDecoder
-from .proto_to_yaml import BodyEncoder
+from .proto_to_yaml import BodyEncoder, NeuralNetworkEncoder
 
 def yaml_to_robot(body_spec, nn_spec, yaml):
     """
@@ -20,6 +20,8 @@ def yaml_to_robot(body_spec, nn_spec, yaml):
     obj = YamlToRobot(body_spec, nn_spec)
     return obj.get_protobuf(yaml)
 
+def unicode_representer(dumper, data):
+        return dumper.represent_scalar(u'tag:yaml.org,2002:str', data)
 
 class YamlToRobot:
     """
@@ -39,6 +41,8 @@ class YamlToRobot:
         self.brain_decoder = NeuralNetworkDecoder(nn_spec, body_spec)
 
         self.body_encoder = BodyEncoder(body_spec)
+        self.brain_encoder = NeuralNetworkEncoder(nn_spec)
+
 
     def get_protobuf(self, stream):
         """
@@ -59,9 +63,11 @@ class YamlToRobot:
 
 
 # testing:
- #   def get_yaml(selfself, pbRobot):
+
+
     def get_yaml(self, bot_pb, stream):
 
+        yaml.add_representer(unicode, unicode_representer)
         bot_yaml = {}
 
         id = bot_pb.id
@@ -70,8 +76,8 @@ class YamlToRobot:
 
         bot_yaml['id'] = id
         bot_yaml['body'] = self.body_encoder.parse_body(body.root)
-        bot_yaml['brain'] = brain
+        bot_yaml['brain'] = self.brain_encoder.parse_neural_network(brain)
 
 
-        yaml.dump(bot_yaml, stream)
+        yaml.dump(bot_yaml, stream, default_flow_style=False)
         return 0
