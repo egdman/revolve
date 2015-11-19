@@ -2,6 +2,66 @@ from ..spec import BodyImplementation, NeuralNetImplementation
 from ..spec.msgs import Body, BodyPart, NeuralNetwork
 from ..spec.exception import err
 
+class NeuralNetworkEncoder:
+    def __init__(self, spec):
+        self.spec = spec
+        self.neurons = {}
+        self.connections = []
+
+    def parse_neural_network(self, network):
+        yaml_network = {}
+
+
+        neurons = network.neuron
+        connections = network.connection
+
+        self.parse_neurons(neurons)
+        self.parse_connections(connections)
+        yaml_network['neurons'] = self.neurons
+        yaml_network['connections'] = self.connections
+        return yaml_network
+
+
+    def parse_neurons(self, neurons):
+
+        for neuron in neurons:
+            neuron_id = neuron.id
+            neuron_layer = neuron.layer
+            neuron_type = neuron.type
+            neuron_part_id = neuron.partId
+
+            if neuron_id in self.neurons:
+                err("Duplicate neuron ID '%s'" % neuron_id)
+
+            spec = self.spec.get(neuron_type)
+            if spec is None:
+                err("Unknown neuron type '%s'" % current["type"])
+            neuron_params = spec.unserialize_params(neuron.param)
+
+            self.neurons[neuron_id] = {
+                "id": neuron_id,
+                "layer": neuron_layer,
+                "type": neuron_type,
+                "part_id": neuron_part_id,
+                "params": neuron_params
+            }
+
+
+    def parse_connections(self, connections):
+        for conn in connections:
+            conn_src = conn.src
+            conn_dst = conn.dst
+            conn_weight = conn.weight
+
+            self.connections.add({
+                'src': conn_src,
+                'dst': conn_dst,
+                'weight': conn_weight
+            })
+
+
+
+
 
 class BodyEncoder:
     def __init__(self, spec):
@@ -43,13 +103,11 @@ class BodyEncoder:
         params = spec.unserialize_params(part.param)
         yaml_part['params'] = params
 
-        children = part.child
+        connections = part.child
         yaml_part['children'] = {}
 
-        for connection in children:
+        for connection in connections:
             conn_src = connection.src
-            conn_dst = connection.dst
-            conn_part = connection.part
 
             if conn_src >= spec.arity:
                 err("Cannot attach to slot %d of part '%s' with arity %d." %
