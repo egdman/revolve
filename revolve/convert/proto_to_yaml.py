@@ -11,18 +11,17 @@ class NeuralNetworkEncoder:
     def parse_neural_network(self, network):
         yaml_network = {}
 
-
         neurons = network.neuron
         connections = network.connection
 
-        self.parse_neurons(neurons)
-        self.parse_connections(connections)
+        self._parse_neurons(neurons)
+        self._parse_connections(connections)
         yaml_network['neurons'] = self.neurons
         yaml_network['connections'] = self.connections
         return yaml_network
 
 
-    def parse_neurons(self, neurons):
+    def _parse_neurons(self, neurons):
 
         for neuron in neurons:
             neuron_id = neuron.id
@@ -47,7 +46,7 @@ class NeuralNetworkEncoder:
             }
 
 
-    def parse_connections(self, connections):
+    def _parse_connections(self, connections):
         for conn in connections:
             conn_src = conn.src
             conn_dst = conn.dst
@@ -71,11 +70,11 @@ class BodyEncoder:
     # parse protobuf body into a dictionary
     def parse_body(self, body):
         yaml_body = {}
-        self.parse_part(yaml_body, body)
+        self._parse_part(yaml_body, body)
         return yaml_body
 
 
-    def parse_part(self, yaml_part, part, dst_slot = None):
+    def _parse_part(self, yaml_part, part, dst_slot = None):
 
  #       print part
         part_id = part.id
@@ -117,13 +116,13 @@ class BodyEncoder:
                 err("Part '%s': Attempt to use slot %d for child which is already "
                     "attached to parent." % (part_id, conn_src))
 
-            self.process_body_connection(connection, yaml_part)
+            self._process_body_connection(connection, yaml_part)
 
 
 
 
 
-    def process_body_connection(self, connection, yaml_part):
+    def _process_body_connection(self, connection, yaml_part):
         conn_src = connection.src
         conn_dst = connection.dst
         conn_part = connection.part
@@ -133,7 +132,7 @@ class BodyEncoder:
         yaml_child_part = yaml_part['children'][conn_src]
 
         # set child part:
-        self.parse_part(yaml_child_part, conn_part, conn_dst)
+        self._parse_part(yaml_child_part, conn_part, conn_dst)
         yaml_child_part['slot'] = conn_dst
 
 
