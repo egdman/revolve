@@ -62,11 +62,10 @@ class YamlToRobot:
         return robot
 
 
-# testing:
-
-
     def get_yaml(self, bot_pb, stream):
-
+        """
+        Converts a protobuf robot object into YAML and writet it into stream.
+        """
         yaml.add_representer(unicode, unicode_representer)
         bot_yaml = {}
 
@@ -78,6 +77,4 @@ class YamlToRobot:
         bot_yaml['body'] = self.body_encoder.parse_body(body.root)
         bot_yaml['brain'] = self.brain_encoder.parse_neural_network(brain)
 
-
         yaml.dump(bot_yaml, stream, default_flow_style=False)
-        return 0
