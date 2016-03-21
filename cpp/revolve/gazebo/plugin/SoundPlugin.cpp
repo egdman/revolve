@@ -51,7 +51,7 @@ void SoundPlugin::OnRequest(ConstRequestPtr & _msg)
 		
 	}
 	else if (_msg->request() == "add_sound_source") {
-		float wavelength = boost::lexical_cast<unsigned int>(_msg->dbl_data());
+        double wavelength = boost::lexical_cast<double>(_msg->dbl_data());
 		std::string sourceName = _msg->data();
 		
 		sourceNamesMutex_.lock();
@@ -86,9 +86,9 @@ void SoundPlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 			
 		sourceNamesMutex_.lock();
 		if (!soundSourceNames_.empty()) {
-			for (	std::map<std::string, float>::iterator it = soundSourceNames_.begin(); it != soundSourceNames_.end(); ++it ) {
+            for (	std::map<std::string, double>::iterator it = soundSourceNames_.begin(); it != soundSourceNames_.end(); ++it ) {
 				std::string name = it->first;
-				float wavelength = it->second;
+                double wavelength = it->second;
 				gz::physics::ModelPtr model = world_->GetModel(name);
 				 
 				gz::msgs::Pose *poseMsg = msg.add_pose();
@@ -96,7 +96,7 @@ void SoundPlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 				poseMsg->set_id(model->GetId());
 				
 				gz::math::Pose modelPose = model->GetWorldPose();
-				// Ign(): pose must be converted to an ignition::math::Pose3d object for some reason
+                // pose must be converted to an ignition::math::Pose3d object for some reason
 				gz::msgs::Set(poseMsg, modelPose.Ign());
 				
 				// FOR DEBUG; this should be gone in the final version:

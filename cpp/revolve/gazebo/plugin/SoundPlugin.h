@@ -50,10 +50,10 @@ protected:
 	::gazebo::event::ConnectionPtr updateConnection_;
 	
 	// mutex for accessing soundSourceNames_ map
-    boost::mutex sourceNamesMutex_;
+	boost::mutex sourceNamesMutex_;
 	
 	// map from sound source names to sound wavelengths
-	std::map<std::string, float> soundSourceNames_;
+    std::map<std::string, double> soundSourceNames_;
 	
 	// frequency of sound source position publications
 	unsigned int soundSourcesPosePubFreq_;
