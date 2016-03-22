@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
+
 namespace gz = gazebo;
 
 namespace revolve {
@@ -27,14 +28,8 @@ SoundSensor::SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sens
 
 SoundSensor::~SoundSensor() {}
 
-void SoundSensor::OnUpdate() {
-
-    // for debug:
-    ::gz::math::Pose sensorPose = this->sensor_->GetPose();
-
-    ::gz::math::Vector3 sensorPosition = sensorPose.pos;
-
-    std::cout << "sensor pose: " << sensorPosition.x << "," << sensorPosition.y << "," << sensorPosition.z << std::endl;
+void SoundSensor::OnUpdate()
+{
 	return;
 }
 
@@ -54,23 +49,24 @@ void SoundSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesS
 
 		}
 		
-		// update sensor pose:
+        // this is the relative pose of sensor with respect to parent link:
         ::gz::math::Pose sensorPose = this->sensor_->GetPose();
 
-//		std::string partId = this->partId();
-//		gz::physics::LinkPtr link = this->model_->GetLink( partId );
-		
-//		if (!link) {
-//            std::string errMes("Sound sensor: could not find the link: ");
-//			errMes.append(partId);
-//			throw std::runtime_error(errMes);
-//		}
-		
-//		gz::math::Vector3 sensorPosition = (link->GetWorldCoGPose()).pos;
-//		gz::math::Quaternion sensorOrientation = (link->GetWorldCoGPose()).rot;
+        std::string parentLinkName = this->sensor_->GetParentName();
+        ::gz::physics::LinkPtr link = this->model_->GetLink( parentLinkName );
 
-        gz::math::Vector3 sensorPosition = sensorPose.pos;
-        gz::math::Quaternion sensorOrientation = sensorPose.rot;
+        if (!link) {
+            std::string errMes("Sound sensor: could not find the link: ");
+            errMes.append(parentLinkName);
+            throw std::runtime_error(errMes);
+        }
+
+        // this is the absolute pose of the parent link:
+        ::gz::math::Pose linkPose = link->GetWorldCoGPose();
+
+        ::gz::math::Pose absSensorPose = linkPose + sensorPose;
+        ::gz::math::Vector3 sensorPosition = absSensorPose.pos;
+        ::gz::math::Quaternion sensorRotation = absSensorPose.rot;
 
         // for now sensor orientation does not matter, this is temporary
 		output_ = 0.0;
