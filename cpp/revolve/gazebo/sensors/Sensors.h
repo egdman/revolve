@@ -5,5 +5,6 @@
 #include <revolve/gazebo/sensors/ImuSensor.h>
 #include <revolve/gazebo/sensors/LightSensor.h>
 #include <revolve/gazebo/sensors/TouchSensor.h>
+#include <revolve/gazebo/sensors/SoundSensor.h>
 
 #endif

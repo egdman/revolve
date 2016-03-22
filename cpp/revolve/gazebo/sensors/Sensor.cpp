@@ -34,6 +34,8 @@ Sensor::Sensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sensor,
 	std::string scopedName = link->GetScopedName(true) + "::" + sensorName;
 	this->sensor_ = gz::sensors::get_sensor(scopedName);
 
+    std::cerr << "sensor scoped name: " << scopedName << std::endl;
+
 	if (!this->sensor_) {
 		std::cerr << "Sensor with scoped name '" << scopedName
 				<< "' could not be found." << std::endl;

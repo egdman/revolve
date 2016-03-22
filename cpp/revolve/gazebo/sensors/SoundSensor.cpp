@@ -28,6 +28,13 @@ SoundSensor::SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sens
 SoundSensor::~SoundSensor() {}
 
 void SoundSensor::OnUpdate() {
+
+    // for debug:
+    ::gz::math::Pose sensorPose = this->sensor_->GetPose();
+
+    ::gz::math::Vector3 sensorPosition = sensorPose.pos;
+
+    std::cout << "sensor pose: " << sensorPosition.x << "," << sensorPosition.y << "," << sensorPosition.z << std::endl;
 	return;
 }
 
@@ -48,7 +55,7 @@ void SoundSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesS
 		}
 		
 		// update sensor pose:
-        ::gz::math::Pose sensorPose = this->sensor_->GetPose()
+        ::gz::math::Pose sensorPose = this->sensor_->GetPose();
 
 //		std::string partId = this->partId();
 //		gz::physics::LinkPtr link = this->model_->GetLink( partId );
