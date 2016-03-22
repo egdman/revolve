@@ -10,7 +10,7 @@ namespace gazebo {
 	
 SoundSensor::SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sensor,
 		std::string partId, std::string sensorId):
-		Sensor(model, sensor, partId, sensorId, 1)
+        Sensor(model, sensor, partId, sensorId, 1) // last parameter is the number of input neurons this sensor generates
 		
 {
 	this->output_ = 0.0;
@@ -48,24 +48,31 @@ void SoundSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesS
 		}
 		
 		// update sensor pose:
-		std::string partId = this->partId();
-		gz::physics::LinkPtr link = this->model_->GetLink( partId );
+        ::gz::math::Pose sensorPose = this->sensor_->GetPose()
+
+//		std::string partId = this->partId();
+//		gz::physics::LinkPtr link = this->model_->GetLink( partId );
 		
-		if (!link) {
-			std::string errMes("Sound sensor: could not find the link ");
-			errMes.append(partId);
-			throw std::runtime_error(errMes);
-		}
+//		if (!link) {
+//            std::string errMes("Sound sensor: could not find the link: ");
+//			errMes.append(partId);
+//			throw std::runtime_error(errMes);
+//		}
 		
-		gz::math::Vector3 sensorPosition = (link->GetWorldCoGPose()).pos;
-		gz::math::Quaternion sensorOrientation = (link->GetWorldCoGPose()).rot;
+//		gz::math::Vector3 sensorPosition = (link->GetWorldCoGPose()).pos;
+//		gz::math::Quaternion sensorOrientation = (link->GetWorldCoGPose()).rot;
+
+        gz::math::Vector3 sensorPosition = sensorPose.pos;
+        gz::math::Quaternion sensorOrientation = sensorPose.rot;
+
+        // for now sensor orientation does not matter, this is temporary
 		output_ = 0.0;
         for (unsigned int i = 0; i < srcPositions.size(); ++i) {
 			gz::math::Vector3 srcPos = srcPositions[i];
 			double dist = sensorPosition.Distance(srcPos);
 			double distSq = dist * dist;
 			double intensity = 1.0 / (distSq + 0.0001);
-			output_ += intensity;
+            output_ += intensity;
 		}
 	}
 }
