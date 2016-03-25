@@ -56,10 +56,10 @@ protected:
     std::map<std::string, double> soundSourceNames_;
 	
 	// frequency of sound source position publications
-	unsigned int soundSourcesPosePubFreq_;
+    double soundSourcesPosePubFreq_;
 	
 	// time of the latest publication:
-	unsigned int lastPubTime_;
+    double lastPubTime_;
 	
 };
 	
