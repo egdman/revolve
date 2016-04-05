@@ -46,7 +46,9 @@ enum neuronType{
 	SIGMOID,
 	CTRNN_SIGMOID,
 	OSCILLATOR,
-	SUPG
+	SUPG,
+	BIAS,
+	GAIN
 };
 
 class NeuralNetwork: public Brain {

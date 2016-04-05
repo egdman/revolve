@@ -101,18 +101,19 @@ void SoundSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesS
 //            std::cout << "axis = " << sensorAxis.x << "," << sensorAxis.y << "," << sensorAxis.z << std::endl;
 //            std::cout << "dot = " << dot << "\n" << std::endl;
 
-            if (dot < 0) {
-                dot = 0;
-            }
+//            if (dot < 0) {
+//               dot = 0;
+//	      }
 
 
 			double distSq = dist * dist;
-			double intensity = 1.0 / (distSq + 0.0001);
+//			double intensity = 1.0 / (distSq + 0.0001);
+            double intensity = 1.0;
             output_ += intensity*dot;
         }
 
-        // FOR DEBUG:
-        // std::cout << "sensor " << this->sensorId() << " output=" << this->output_ << std::endl;
+        // // FOR DEBUG:
+        // std::cout << "microphone " << this->sensorId() << " = " << this->output_ << std::endl;
 	}
 }
 

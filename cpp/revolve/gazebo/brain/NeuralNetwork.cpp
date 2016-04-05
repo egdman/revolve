@@ -310,6 +310,16 @@ void NeuralNetwork::step(double time) {
 			nextState[i] = (0.5 - (gain/2.0) +
 					nextState[i] * gain);
 		} break;
+		case BIAS: {
+		    double bias = params_[base];
+		    nextState[i] = curNeuronActivation + bias;
+		    break;
+		}
+		case GAIN: {
+		    double gain = params_[base];
+		    nextState[i] = curNeuronActivation * gain;
+		    break;
+		}
 		default:
 			// Unsupported type should never happen
 			std::cerr << "Invalid neuron type during processing, must be a bug." << std::endl;
@@ -579,7 +589,26 @@ void neuronHelper(double* params, unsigned int* types, sdf::ElementPtr neuron) {
 		params[0] = neuron->GetElement("rv:period")->Get< double >();
 		params[1] = neuron->GetElement("rv:phase_offset")->Get< double >();
 		params[2] = neuron->GetElement("rv:amplitude")->Get< double >();
-	} else {
+	}
+	else if ("Gain" == type) {
+	    types[0] = GAIN;
+
+	    if (!neuron->HasElement("rv:gain")) {
+	        std::cerr << "A `" << type << "` neuron requires 'rv:gain' element." << std::endl;
+			throw std::runtime_error("Robot brain error");
+	    }
+	    params[0] = neuron->GetElement("rv:gain")->Get<double>();
+	}
+	else if ("Bias" == type) {
+	    types[0] = BIAS;
+
+	    if (!neuron->HasElement("rv:bias")) {
+	        std::cerr << "A `" << type << "` neuron requires 'rv:bias' element." << std::endl;
+			throw std::runtime_error("Robot brain error");
+	    }
+	    params[0] = neuron->GetElement("rv:bias")->Get<double>();
+	}
+	else {
 		std::cerr << "Unsupported neuron type `" << type << '`' << std::endl;
 		throw std::runtime_error("Robot brain error");
 	}
@@ -608,7 +637,17 @@ void neuronHelper(double* params, unsigned int* types, const revolve::msgs::Neur
 		params[0] = neuron.param(0).value();
 		params[1] = neuron.param(1).value();
 		params[2] = neuron.param(2).value();
-	} else {
+	}
+	else if ("Gain" == type || "Bias" == type) {
+	    types[0] = "Gain" == type ? GAIN : BIAS;
+
+	    if (neuron.param_size() != 1) {
+	        std::cerr << "A `" << type << "` neuron requires exactly one parameter." << std::endl;
+			throw std::runtime_error("Robot brain error");
+	    }
+	    params[0] = neuron.param(0).value();
+	}
+	else {
 		std::cerr << "Unsupported neuron type `" << type << '`' << std::endl;
 		throw std::runtime_error("Robot brain error");
 	}
