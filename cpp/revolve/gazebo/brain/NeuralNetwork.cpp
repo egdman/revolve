@@ -41,6 +41,10 @@ NeuralNetwork::NeuralNetwork(std::string modelName, sdf::ElementPtr node,
 	alterSub_ = node_->Subscribe("~/"+modelName+"/modify_neural_network",
 								 &NeuralNetwork::modify, this);
 
+		// Listen to requests concerning this neural network
+	requestSub_ = node_->Subscribe("~/"+modelName+"/neural_network_request",
+								&NeuralNetwork::handleRequest, this);
+
 	// Initialize weights, input and states to zero by default
 	memset(inputWeights_, 0, sizeof(inputWeights_));
 	memset(outputWeights_, 0, sizeof(outputWeights_));
@@ -243,6 +247,15 @@ NeuralNetwork::NeuralNetwork(std::string modelName, sdf::ElementPtr node,
 NeuralNetwork::~NeuralNetwork()
 {}
 
+
+void NeuralNetwork::handleRequest(ConstRequestPtr & _msg)
+{
+	if (_msg->request() == "flush_neural_network") {
+		this->flush();
+	}
+}
+
+
 void NeuralNetwork::step(double time) {
 	unsigned int i = 0;
 	unsigned int j = 0;
@@ -358,6 +371,29 @@ void NeuralNetwork::update(const std::vector<MotorPtr>& motors,
 
 //////////////////////////////////////////////////////////
 
+void NeuralNetwork::flush()
+{
+	boost::mutex::scoped_lock lock(networkMutex_);
+
+	// delete all connections:
+	memset(inputWeights_, 0, sizeof(inputWeights_));
+	memset(outputWeights_, 0, sizeof(outputWeights_));
+	memset(hiddenWeights_, 0, sizeof(hiddenWeights_));
+
+	// erase items in maps:
+	for (auto it = positionMap_.begin(); it != positionMap_.end(); ++it) {
+		auto neuronId = it->first;
+		if ("hidden" == layerMap_[neuronId]) {
+			positionMap_.erase(neuronId);
+			layerMap_.erase(neuronId);
+		}
+	}
+	// change counters:
+	nNonInputs_ -= nHidden_;
+	nHidden_ = 0;
+}
+
+
 void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 	boost::mutex::scoped_lock lock(networkMutex_);
 
@@ -420,10 +456,10 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 			for (j = 0; j < size; ++j) {
 				memmove(
 					// Position of item to remove
-					weights + (nOutputs_ + pos) * s,
+					weights + (nOutputs_ + pos) * s + j*(MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS),
 
 					// Position of next item
-					weights + (nOutputs_ + pos + 1) * s,
+					weights +(nOutputs_ + pos + 1) * s + j*(MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS),
 
 					// # of possible hidden neurons beyond this one
 					(MAX_HIDDEN_NEURONS - pos - 1) * s
@@ -431,7 +467,7 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 
 				// Zero out the last item in case a connection that corresponds
 				// to it is ever added.
-				weights[nOutputs_ + pos] = 0;
+				weights[(j+1)*MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS - 1] = 0;
 			}
 		}
 
@@ -450,7 +486,10 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 		);
 
 		// Zero the remaining entries at the end
-		memset(hiddenWeights_ + (MAX_HIDDEN_NEURONS - 1) * s, 0, MAX_NON_INPUT_NEURONS * s);
+		memset(
+			hiddenWeights_ + MAX_NON_INPUT_NEURONS*(MAX_HIDDEN_NEURONS - 1) * s,
+			0,
+			MAX_NON_INPUT_NEURONS * s);
 
 		// Decrement the entry in the `positionMap` for all
 		// hidden neurons above this one.
