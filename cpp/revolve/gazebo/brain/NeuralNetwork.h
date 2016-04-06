@@ -109,6 +109,15 @@ protected:
 	 */
 	::gazebo::transport::SubscriberPtr requestSub_;
 
+	/**
+	 * Response publisher
+	 */
+    ::gazebo::transport::PublisherPtr responsePub_;
+
+    /**
+     * Name of the robot
+     */
+    std::string modelName_;
 
 	/*
 	 * Connection weights, separated into three arrays for convenience. Note

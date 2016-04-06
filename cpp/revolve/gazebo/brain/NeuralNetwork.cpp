@@ -37,13 +37,19 @@ NeuralNetwork::NeuralNetwork(std::string modelName, sdf::ElementPtr node,
 	node_.reset(new gz::transport::Node());
 	node_->Init();
 
-	// Listen to network modification requests
+    // remember the name of the robot
+    modelName_ = modelName;
+
+  	// Listen to network modification requests
 	alterSub_ = node_->Subscribe("~/"+modelName+"/modify_neural_network",
 								 &NeuralNetwork::modify, this);
 
-		// Listen to requests concerning this neural network
-	requestSub_ = node_->Subscribe("~/"+modelName+"/neural_network_request",
+	// Subscriber to requests concerning this neural network
+	requestSub_ = node_->Subscribe("~/request",
 								&NeuralNetwork::handleRequest, this);
+
+	// Publisher for responses to requests
+	responsePub_ = node_->Advertise<gz::msgs::Response>("~/response");
 
 	// Initialize weights, input and states to zero by default
 	memset(inputWeights_, 0, sizeof(inputWeights_));
@@ -250,8 +256,18 @@ NeuralNetwork::~NeuralNetwork()
 
 void NeuralNetwork::handleRequest(ConstRequestPtr & _msg)
 {
-	if (_msg->request() == "flush_neural_network") {
-		this->flush();
+    // check if this request is intended for this robot
+    if (_msg->data() == modelName_) {
+        if (_msg->request() == "flush_neural_network") {
+            this->flush();
+
+            // publish response about success
+            gz::msgs::Response resp;
+			resp.set_id(_msg->id());
+			resp.set_request(_msg->request());
+			resp.set_response("success");
+			responsePub_->Publish(resp);
+        }
 	}
 }
 
@@ -383,7 +399,11 @@ void NeuralNetwork::flush()
 	// erase items in maps:
 	for (auto it = positionMap_.begin(); it != positionMap_.end(); ++it) {
 		auto neuronId = it->first;
+
 		if ("hidden" == layerMap_[neuronId]) {
+
+//		    std::cout << neuronId << ":  erase" << std::endl;
+
 			positionMap_.erase(neuronId);
 			layerMap_.erase(neuronId);
 		}
@@ -514,6 +534,9 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 
 		auto neuron = req->add_hidden(i);
 		auto id = neuron.id();
+
+//		std::cout << "Inserting neuron:  " << id << std::endl;
+
 		if (layerMap_.count(id)) {
 			std::cerr << "Adding duplicate neuron ID `" << id << "`" << std::endl;
 			throw std::runtime_error("Robot brain error");
