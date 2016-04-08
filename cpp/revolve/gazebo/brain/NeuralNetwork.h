@@ -105,16 +105,6 @@ protected:
 	::gazebo::transport::SubscriberPtr alterSub_;
 
     /**
-	 * Request subscriber
-	 */
-	::gazebo::transport::SubscriberPtr requestSub_;
-
-	/**
-	 * Response publisher
-	 */
-    ::gazebo::transport::PublisherPtr responsePub_;
-
-    /**
      * Name of the robot
      */
     std::string modelName_;

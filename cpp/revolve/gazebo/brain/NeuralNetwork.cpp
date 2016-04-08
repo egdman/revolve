@@ -44,12 +44,6 @@ NeuralNetwork::NeuralNetwork(std::string modelName, sdf::ElementPtr node,
 	alterSub_ = node_->Subscribe("~/"+modelName+"/modify_neural_network",
 								 &NeuralNetwork::modify, this);
 
-	// Subscriber to requests concerning this neural network
-	requestSub_ = node_->Subscribe("~/request",
-								&NeuralNetwork::handleRequest, this);
-
-	// Publisher for responses to requests
-	responsePub_ = node_->Advertise<gz::msgs::Response>("~/response");
 
 	// Initialize weights, input and states to zero by default
 	memset(inputWeights_, 0, sizeof(inputWeights_));
@@ -254,23 +248,6 @@ NeuralNetwork::~NeuralNetwork()
 {}
 
 
-void NeuralNetwork::handleRequest(ConstRequestPtr & _msg)
-{
-    // check if this request is intended for this robot
-    if (_msg->data() == modelName_) {
-        if (_msg->request() == "flush_neural_network") {
-            this->flush();
-
-            // publish response about success
-            gz::msgs::Response resp;
-			resp.set_id(_msg->id());
-			resp.set_request(_msg->request());
-			resp.set_response("success");
-			responsePub_->Publish(resp);
-        }
-	}
-}
-
 
 void NeuralNetwork::step(double time) {
 	unsigned int i = 0;
@@ -389,7 +366,7 @@ void NeuralNetwork::update(const std::vector<MotorPtr>& motors,
 
 void NeuralNetwork::flush()
 {
-	boost::mutex::scoped_lock lock(networkMutex_);
+//	boost::mutex::scoped_lock lock(networkMutex_);
 
 	// delete all connections:
 	memset(inputWeights_, 0, sizeof(inputWeights_));
@@ -418,111 +395,113 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 	boost::mutex::scoped_lock lock(networkMutex_);
 
 	unsigned int i, j;
-	for (i = 0; i < (unsigned int)req->remove_hidden_size(); ++i) {
-		// Find the neuron + position
-		auto id = req->remove_hidden(i);
-		if (!positionMap_.count(id)) {
-			std::cerr << "Unknown neuron ID `" << id << "`" << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
+//	for (i = 0; i < (unsigned int)req->remove_hidden_size(); ++i) {
+//		// Find the neuron + position
+//		auto id = req->remove_hidden(i);
+//		if (!positionMap_.count(id)) {
+//			std::cerr << "Unknown neuron ID `" << id << "`" << std::endl;
+//			throw std::runtime_error("Robot brain error");
+//		}
+//
+//		if ("hidden" != layerMap_[id]) {
+//			std::cerr << "Cannot remove neuron ID `" << id << "`, it is not a hidden neuron." << std::endl;
+//			throw std::runtime_error("Robot brain error");
+//		}
+//
+//		auto pos = positionMap_[id];
+//		positionMap_.erase(id);
+//		layerMap_.erase(id);
+//
+//		// Shift types
+//		auto s = sizeof(types_[0]);
+//		std::memmove(
+//			// Position shifted one type to the left
+//			types_ + (pos + nOutputs_) * s,
+//
+//			// Position of next neuron type
+//			types_ + (pos + nOutputs_ + 1) * s,
+//
+//			// # of hidden neurons beyond this one
+//			s * (nHidden_ - pos - 1)
+//		);
+//
+//		// Shift parameters
+//		s = sizeof(params_[0]);
+//		memmove(
+//			// Position of item to remove
+//			params_ + (pos + nOutputs_) * MAX_NEURON_PARAMS * s,
+//
+//			// Position of next neuron type
+//			params_ + (pos + nOutputs_ + 1) * MAX_NEURON_PARAMS * s,
+//
+//			// # of hidden neurons beyond this one
+//			(nHidden_ - pos - 1) * MAX_NEURON_PARAMS * s
+//		);
+//
+//		// Reposition items in weight arrays. We start with the weights
+//		// of connections pointing *to* the neuron to be removed.
+//		// For each entry in each of the three weights arrays we have to
+//		// move all hidden connection weights down, then zero out the last entry
+//		s = sizeof(inputWeights_[0]);
+//		double* weightArrays[] = {inputWeights_, outputWeights_, hiddenWeights_};
+//		unsigned int sizes[] = {nInputs_, nOutputs_, nHidden_};
+//
+//		for (unsigned int k = 0; k < 3; ++k) {
+//			auto * weights = weightArrays[k];
+//			auto size = sizes[k];
+//
+//			for (j = 0; j < size; ++j) {
+//				memmove(
+//					// Position of item to remove
+//					weights + (nOutputs_ + pos) * s + j*(MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS),
+//
+//					// Position of next item
+//					weights +(nOutputs_ + pos + 1) * s + j*(MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS),
+//
+//					// # of possible hidden neurons beyond this one
+//					(MAX_HIDDEN_NEURONS - pos - 1) * s
+//				);
+//
+//				// Zero out the last item in case a connection that corresponds
+//				// to it is ever added.
+//				weights[(j+1)*MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS - 1] = 0;
+//			}
+//		}
+//
+//		// Now the weights where the removed neuron is the source
+//		// The block of weights corresponding to the neuron that is being
+//		// removed needs to be removed by shifting down all items beyond it.
+//		memmove(
+//			// Position of the item to remove
+//			hiddenWeights_ + pos * MAX_NON_INPUT_NEURONS * s,
+//
+//			// Position of the next item
+//			hiddenWeights_ + (pos + 1) * MAX_NON_INPUT_NEURONS * s,
+//
+//			// Remaining number of memory items
+//			(MAX_HIDDEN_NEURONS - pos - 1) * MAX_NON_INPUT_NEURONS * s
+//		);
+//
+//		// Zero the remaining entries at the end
+//		memset(
+//			hiddenWeights_ + MAX_NON_INPUT_NEURONS*(MAX_HIDDEN_NEURONS - 1) * s,
+//			0,
+//			MAX_NON_INPUT_NEURONS * s);
+//
+//		// Decrement the entry in the `positionMap` for all
+//		// hidden neurons above this one.
+//		for (auto iter = positionMap_.begin(); iter != positionMap_.end(); ++iter) {
+//			auto layer = layerMap_[iter->first];
+//			if ("hidden" == layer && positionMap_[iter->first] > pos) {
+//				positionMap_[iter->first]--;
+//			}
+//		}
+//
+//		nHidden_--;
+//		nNonInputs_--;
+//	}
 
-		if ("hidden" != layerMap_[id]) {
-			std::cerr << "Cannot remove neuron ID `" << id << "`, it is not a hidden neuron." << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
-
-		auto pos = positionMap_[id];
-		positionMap_.erase(id);
-		layerMap_.erase(id);
-
-		// Shift types
-		auto s = sizeof(types_[0]);
-		std::memmove(
-			// Position shifted one type to the left
-			types_ + (pos + nOutputs_) * s,
-
-			// Position of next neuron type
-			types_ + (pos + nOutputs_ + 1) * s,
-
-			// # of hidden neurons beyond this one
-			s * (nHidden_ - pos - 1)
-		);
-
-		// Shift parameters
-		s = sizeof(params_[0]);
-		memmove(
-			// Position of item to remove
-			params_ + (pos + nOutputs_) * MAX_NEURON_PARAMS * s,
-
-			// Position of next neuron type
-			params_ + (pos + nOutputs_ + 1) * MAX_NEURON_PARAMS * s,
-
-			// # of hidden neurons beyond this one
-			(nHidden_ - pos - 1) * MAX_NEURON_PARAMS * s
-		);
-
-		// Reposition items in weight arrays. We start with the weights
-		// of connections pointing *to* the neuron to be removed.
-		// For each entry in each of the three weights arrays we have to
-		// move all hidden connection weights down, then zero out the last entry
-		s = sizeof(inputWeights_[0]);
-		double* weightArrays[] = {inputWeights_, outputWeights_, hiddenWeights_};
-		unsigned int sizes[] = {nInputs_, nOutputs_, nHidden_};
-
-		for (unsigned int k = 0; k < 3; ++k) {
-			auto * weights = weightArrays[k];
-			auto size = sizes[k];
-
-			for (j = 0; j < size; ++j) {
-				memmove(
-					// Position of item to remove
-					weights + (nOutputs_ + pos) * s + j*(MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS),
-
-					// Position of next item
-					weights +(nOutputs_ + pos + 1) * s + j*(MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS),
-
-					// # of possible hidden neurons beyond this one
-					(MAX_HIDDEN_NEURONS - pos - 1) * s
-				);
-
-				// Zero out the last item in case a connection that corresponds
-				// to it is ever added.
-				weights[(j+1)*MAX_HIDDEN_NEURONS+MAX_OUTPUT_NEURONS - 1] = 0;
-			}
-		}
-
-		// Now the weights where the removed neuron is the source
-		// The block of weights corresponding to the neuron that is being
-		// removed needs to be removed by shifting down all items beyond it.
-		memmove(
-			// Position of the item to remove
-			hiddenWeights_ + pos * MAX_NON_INPUT_NEURONS * s,
-
-			// Position of the next item
-			hiddenWeights_ + (pos + 1) * MAX_NON_INPUT_NEURONS * s,
-
-			// Remaining number of memory items
-			(MAX_HIDDEN_NEURONS - pos - 1) * MAX_NON_INPUT_NEURONS * s
-		);
-
-		// Zero the remaining entries at the end
-		memset(
-			hiddenWeights_ + MAX_NON_INPUT_NEURONS*(MAX_HIDDEN_NEURONS - 1) * s,
-			0,
-			MAX_NON_INPUT_NEURONS * s);
-
-		// Decrement the entry in the `positionMap` for all
-		// hidden neurons above this one.
-		for (auto iter = positionMap_.begin(); iter != positionMap_.end(); ++iter) {
-			auto layer = layerMap_[iter->first];
-			if ("hidden" == layer && positionMap_[iter->first] > pos) {
-				positionMap_[iter->first]--;
-			}
-		}
-
-		nHidden_--;
-		nNonInputs_--;
-	}
+    this->flush();
 
 	// Add new requested hidden neurons
 	for (i = 0; i < (unsigned int)req->add_hidden_size(); ++i) {
@@ -534,8 +513,6 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 
 		auto neuron = req->add_hidden(i);
 		auto id = neuron.id();
-
-//		std::cout << "Inserting neuron:  " << id << std::endl;
 
 		if (layerMap_.count(id)) {
 			std::cerr << "Adding duplicate neuron ID `" << id << "`" << std::endl;
@@ -551,25 +528,25 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 		nNonInputs_++;
 	}
 
-	// Update parameters of existing neurons
-	for (i = 0; i < (unsigned int)req->set_parameters_size(); ++i) {
-		auto neuron = req->set_parameters(i);
-		auto id = neuron.id();
-		if (!positionMap_.count(id)) {
-			std::cerr << "Unknown neuron ID `" << id << "`" << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
-
-		auto pos = positionMap_[id];
-		auto layer = layerMap_[id];
-
-		if ("input" == layer) {
-			std::cerr << "Input neurons cannot be modified." << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
-
-		neuronHelper(&params_[pos * MAX_NEURON_PARAMS], &types_[pos], neuron);
-	}
+//	// Update parameters of existing neurons
+//	for (i = 0; i < (unsigned int)req->set_parameters_size(); ++i) {
+//		auto neuron = req->set_parameters(i);
+//		auto id = neuron.id();
+//		if (!positionMap_.count(id)) {
+//			std::cerr << "Unknown neuron ID `" << id << "`" << std::endl;
+//			throw std::runtime_error("Robot brain error");
+//		}
+//
+//		auto pos = positionMap_[id];
+//		auto layer = layerMap_[id];
+//
+//		if ("input" == layer) {
+//			std::cerr << "Input neurons cannot be modified." << std::endl;
+//			throw std::runtime_error("Robot brain error");
+//		}
+//
+//		neuronHelper(&params_[pos * MAX_NEURON_PARAMS], &types_[pos], neuron);
+//	}
 
 	// Set weights of new or existing connections
 	for (i = 0; i < (unsigned int)req->set_weights_size(); ++i) {
