@@ -104,6 +104,11 @@ protected:
 	 */
 	::gazebo::transport::SubscriberPtr alterSub_;
 
+	/**
+	 * Publisher for network modification responses
+	 */
+	::gazebo::transport::PublisherPtr responsePub_;
+
     /**
      * Name of the robot
      */
