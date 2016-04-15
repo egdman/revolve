@@ -374,6 +374,10 @@ void NeuralNetwork::flush()
 	memset(outputWeights_, 0, sizeof(outputWeights_));
 	memset(hiddenWeights_, 0, sizeof(hiddenWeights_));
 
+	memset(state1_, 0, sizeof(state1_));
+	memset(state2_, 0, sizeof(state2_));
+	memset(input_, 0, sizeof(input_));
+
 	// erase items in maps:
 	for (auto it = positionMap_.begin(); it != positionMap_.end(); ++it) {
 		auto neuronId = it->first;
