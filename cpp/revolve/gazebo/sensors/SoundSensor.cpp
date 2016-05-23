@@ -24,6 +24,27 @@ SoundSensor::SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sens
 	
 	// connect to the update signal
 	this->updateConnection_ = this->sensor_->ConnectUpdated(boost::bind(&SoundSensor::OnUpdate, this));
+
+    // this is the relative pose of this sensor in the coordinate system of the parent link
+    this->sensorPose_ = this->sensor_->GetPose();
+
+    // this is the sensor axis in the link coordinate system:
+    this->sensorAxis_ = this->sensorPose_.rot.RotateVector(::gz::math::Vector3(0, 0, 1));
+
+    // name of the parent link
+    std::string parentLinkName = this->sensor_->GetParentName();
+
+    // ptr to the parent link
+    this->linkPtr_ = this->model_->GetLink( parentLinkName );
+    if (!(this->linkPtr_)) {
+        std::string errMes("Sound sensor: could not find the link: ");
+        errMes.append(parentLinkName);
+        throw std::runtime_error(errMes);
+    }
+
+
+
+
 }
 
 SoundSensor::~SoundSensor() {}
@@ -49,34 +70,50 @@ void SoundSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesS
 
 		}
 		
-        // this is the relative pose of sensor with respect to parent link:
-        ::gz::math::Pose sensorPose = this->sensor_->GetPose();
+        // this is the absolute pose of the parent link in the world coordinate system:
+        ::gz::math::Pose linkPose = this->linkPtr_->GetWorldCoGPose();
 
-        std::string parentLinkName = this->sensor_->GetParentName();
-        ::gz::physics::LinkPtr link = this->model_->GetLink( parentLinkName );
+        // this is the relative position of the sensor in the world coordinate system:
+        ::gz::math::Vector3 sensorRelPosRot = linkPose.rot.RotateVector((this->sensorPose_).pos);
 
-        if (!link) {
-            std::string errMes("Sound sensor: could not find the link: ");
-            errMes.append(parentLinkName);
-            throw std::runtime_error(errMes);
-        }
+        // absolute position of the sensor in the world coordinate system:
+        ::gz::math::Vector3 sensorAbsPos = linkPose.pos + sensorRelPosRot;
 
-        // this is the absolute pose of the parent link:
-        ::gz::math::Pose linkPose = link->GetWorldCoGPose();
+        // the sensor axis in the world coordinate system:
+        ::gz::math::Vector3 sensorAxis = linkPose.rot.RotateVector(this->sensorAxis_);
 
-        ::gz::math::Pose absSensorPose = linkPose + sensorPose;
-        ::gz::math::Vector3 sensorPosition = absSensorPose.pos;
-        ::gz::math::Quaternion sensorRotation = absSensorPose.rot;
+//        // FOR DEBUG:
+//        std::cout << "link   pos = " << linkPose.pos.x << "," << linkPose.pos.y << "," << linkPose.pos.z << std::endl;
+//        std::cout << "sensor pos = " << sensorPose_.pos.x << "," << sensorPose_.pos.y << "," << sensorPose_.pos.z << std::endl;
+//        std::cout << "abs    pos = " << sensorAbsPos.x << "," << sensorAbsPos.y << "," << sensorAbsPos.z << std::endl;
 
         // for now sensor orientation does not matter, this is temporary
 		output_ = 0.0;
         for (unsigned int i = 0; i < srcPositions.size(); ++i) {
 			gz::math::Vector3 srcPos = srcPositions[i];
-			double dist = sensorPosition.Distance(srcPos);
+            double dist = sensorAbsPos.Distance(srcPos);
+            ::gz::math::Vector3 sensorToSource = (srcPos - sensorAbsPos).Normalize();
+
+            double dot = sensorAxis.Dot(sensorToSource);
+
+//            // FOR DEBUG:
+//            std::cout << "dir  = " << sensorToSource.x << "," << sensorToSource.y << "," << sensorToSource.z << std::endl;
+//            std::cout << "axis = " << sensorAxis.x << "," << sensorAxis.y << "," << sensorAxis.z << std::endl;
+//            std::cout << "dot = " << dot << "\n" << std::endl;
+
+//            if (dot < 0) {
+//               dot = 0;
+//	      }
+
+
 			double distSq = dist * dist;
-			double intensity = 1.0 / (distSq + 0.0001);
-            output_ += intensity;
-		}
+//			double intensity = 1.0 / (distSq + 0.0001);
+            double intensity = 1.0;
+            output_ += intensity*dot;
+        }
+
+        // // FOR DEBUG:
+        // std::cout << "microphone " << this->sensorId() << " = " << this->output_ << std::endl;
 	}
 }
 

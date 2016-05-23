@@ -38,7 +38,16 @@ protected:
 
 	// Pointer to the update connection
 	::gazebo::event::ConnectionPtr updateConnection_;
-	
+
+    // Relative pose of this sensor in the coordinate system of the parent link
+    ::gazebo::math::Pose sensorPose_;
+
+    // The sensor axis in the parent link coordinate system
+    ::gazebo::math::Vector3 sensorAxis_;
+
+    // Pointer to the parent link
+    ::gazebo::physics::LinkPtr linkPtr_;
+
 	// Calculate output value based on the position of the sensor and the positions of sound sources
     virtual void calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &_msg);
 private:

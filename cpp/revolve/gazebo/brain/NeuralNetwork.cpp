@@ -37,9 +37,14 @@ NeuralNetwork::NeuralNetwork(std::string modelName, sdf::ElementPtr node,
 	node_.reset(new gz::transport::Node());
 	node_->Init();
 
-	// Listen to network modification requests
+    // remember the name of the robot
+    modelName_ = modelName;
+
+  	// Listen to network modification requests
 	alterSub_ = node_->Subscribe("~/"+modelName+"/modify_neural_network",
 								 &NeuralNetwork::modify, this);
+
+    responsePub_ = node_->Advertise<gz::msgs::Response>("~/"+modelName+"/modify_neural_network_response");
 
 	// Initialize weights, input and states to zero by default
 	memset(inputWeights_, 0, sizeof(inputWeights_));
@@ -243,6 +248,8 @@ NeuralNetwork::NeuralNetwork(std::string modelName, sdf::ElementPtr node,
 NeuralNetwork::~NeuralNetwork()
 {}
 
+
+
 void NeuralNetwork::step(double time) {
 	unsigned int i = 0;
 	unsigned int j = 0;
@@ -310,6 +317,16 @@ void NeuralNetwork::step(double time) {
 			nextState[i] = (0.5 - (gain/2.0) +
 					nextState[i] * gain);
 		} break;
+		case BIAS: {
+		    double bias = params_[base];
+		    nextState[i] = curNeuronActivation + bias;
+		    break;
+		}
+		case GAIN: {
+		    double gain = params_[base];
+		    nextState[i] = curNeuronActivation * gain;
+		    break;
+		}
 		default:
 			// Unsupported type should never happen
 			std::cerr << "Invalid neuron type during processing, must be a bug." << std::endl;
@@ -348,112 +365,44 @@ void NeuralNetwork::update(const std::vector<MotorPtr>& motors,
 
 //////////////////////////////////////////////////////////
 
+void NeuralNetwork::flush()
+{
+//	boost::mutex::scoped_lock lock(networkMutex_);
+
+	// delete all connections:
+	memset(inputWeights_, 0, sizeof(inputWeights_));
+	memset(outputWeights_, 0, sizeof(outputWeights_));
+	memset(hiddenWeights_, 0, sizeof(hiddenWeights_));
+
+	memset(state1_, 0, sizeof(state1_));
+	memset(state2_, 0, sizeof(state2_));
+	memset(input_, 0, sizeof(input_));
+
+	// erase items in maps:
+	for (auto it = positionMap_.begin(); it != positionMap_.end(); ++it) {
+		auto neuronId = it->first;
+
+		if ("hidden" == layerMap_[neuronId]) {
+
+//		    std::cout << neuronId << ":  erase" << std::endl;
+
+			positionMap_.erase(neuronId);
+			layerMap_.erase(neuronId);
+		}
+	}
+	// change counters:
+	nNonInputs_ -= nHidden_;
+	nHidden_ = 0;
+}
+
+
 void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 	boost::mutex::scoped_lock lock(networkMutex_);
 
-	unsigned int i, j;
-	for (i = 0; i < (unsigned int)req->remove_hidden_size(); ++i) {
-		// Find the neuron + position
-		auto id = req->remove_hidden(i);
-		if (!positionMap_.count(id)) {
-			std::cerr << "Unknown neuron ID `" << id << "`" << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
+    // delete all connections and hidden neurons:
+    this->flush();
 
-		if ("hidden" != layerMap_[id]) {
-			std::cerr << "Cannot remove neuron ID `" << id << "`, it is not a hidden neuron." << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
-
-		auto pos = positionMap_[id];
-		positionMap_.erase(id);
-		layerMap_.erase(id);
-
-		// Shift types
-		auto s = sizeof(types_[0]);
-		std::memmove(
-			// Position shifted one type to the left
-			types_ + (pos + nOutputs_) * s,
-
-			// Position of next neuron type
-			types_ + (pos + nOutputs_ + 1) * s,
-
-			// # of hidden neurons beyond this one
-			s * (nHidden_ - pos - 1)
-		);
-
-		// Shift parameters
-		s = sizeof(params_[0]);
-		memmove(
-			// Position of item to remove
-			params_ + (pos + nOutputs_) * MAX_NEURON_PARAMS * s,
-
-			// Position of next neuron type
-			params_ + (pos + nOutputs_ + 1) * MAX_NEURON_PARAMS * s,
-
-			// # of hidden neurons beyond this one
-			(nHidden_ - pos - 1) * MAX_NEURON_PARAMS * s
-		);
-
-		// Reposition items in weight arrays. We start with the weights
-		// of connections pointing *to* the neuron to be removed.
-		// For each entry in each of the three weights arrays we have to
-		// move all hidden connection weights down, then zero out the last entry
-		s = sizeof(inputWeights_[0]);
-		double* weightArrays[] = {inputWeights_, outputWeights_, hiddenWeights_};
-		unsigned int sizes[] = {nInputs_, nOutputs_, nHidden_};
-
-		for (unsigned int k = 0; k < 3; ++k) {
-			auto * weights = weightArrays[k];
-			auto size = sizes[k];
-
-			for (j = 0; j < size; ++j) {
-				memmove(
-					// Position of item to remove
-					weights + (nOutputs_ + pos) * s,
-
-					// Position of next item
-					weights + (nOutputs_ + pos + 1) * s,
-
-					// # of possible hidden neurons beyond this one
-					(MAX_HIDDEN_NEURONS - pos - 1) * s
-				);
-
-				// Zero out the last item in case a connection that corresponds
-				// to it is ever added.
-				weights[nOutputs_ + pos] = 0;
-			}
-		}
-
-		// Now the weights where the removed neuron is the source
-		// The block of weights corresponding to the neuron that is being
-		// removed needs to be removed by shifting down all items beyond it.
-		memmove(
-			// Position of the item to remove
-			hiddenWeights_ + pos * MAX_NON_INPUT_NEURONS * s,
-
-			// Position of the next item
-			hiddenWeights_ + (pos + 1) * MAX_NON_INPUT_NEURONS * s,
-
-			// Remaining number of memory items
-			(MAX_HIDDEN_NEURONS - pos - 1) * MAX_NON_INPUT_NEURONS * s
-		);
-
-		// Zero the remaining entries at the end
-		memset(hiddenWeights_ + (MAX_HIDDEN_NEURONS - 1) * s, 0, MAX_NON_INPUT_NEURONS * s);
-
-		// Decrement the entry in the `positionMap` for all
-		// hidden neurons above this one.
-		for (auto iter = positionMap_.begin(); iter != positionMap_.end(); ++iter) {
-			auto layer = layerMap_[iter->first];
-			if ("hidden" == layer && positionMap_[iter->first] > pos) {
-				positionMap_[iter->first]--;
-			}
-		}
-
-		nHidden_--;
-		nNonInputs_--;
-	}
+    unsigned int i;
 
 	// Add new requested hidden neurons
 	for (i = 0; i < (unsigned int)req->add_hidden_size(); ++i) {
@@ -465,6 +414,7 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 
 		auto neuron = req->add_hidden(i);
 		auto id = neuron.id();
+
 		if (layerMap_.count(id)) {
 			std::cerr << "Adding duplicate neuron ID `" << id << "`" << std::endl;
 			throw std::runtime_error("Robot brain error");
@@ -479,26 +429,6 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 		nNonInputs_++;
 	}
 
-	// Update parameters of existing neurons
-	for (i = 0; i < (unsigned int)req->set_parameters_size(); ++i) {
-		auto neuron = req->set_parameters(i);
-		auto id = neuron.id();
-		if (!positionMap_.count(id)) {
-			std::cerr << "Unknown neuron ID `" << id << "`" << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
-
-		auto pos = positionMap_[id];
-		auto layer = layerMap_[id];
-
-		if ("input" == layer) {
-			std::cerr << "Input neurons cannot be modified." << std::endl;
-			throw std::runtime_error("Robot brain error");
-		}
-
-		neuronHelper(&params_[pos * MAX_NEURON_PARAMS], &types_[pos], neuron);
-	}
-
 	// Set weights of new or existing connections
 	for (i = 0; i < (unsigned int)req->set_weights_size(); ++i) {
 		auto conn = req->set_weights(i);
@@ -506,6 +436,14 @@ void NeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req) {
 		auto dst = conn.dst();
 		this->connectionHelper(src, dst, conn.weight());
 	}
+
+
+	gz::msgs::Response resp;
+    resp.set_id(0);
+    resp.set_request("modify_neural_network");
+    resp.set_response(this->modelName_);
+    responsePub_->Publish(resp);
+
 }
 
 //////////////////////////////////////
@@ -579,7 +517,26 @@ void neuronHelper(double* params, unsigned int* types, sdf::ElementPtr neuron) {
 		params[0] = neuron->GetElement("rv:period")->Get< double >();
 		params[1] = neuron->GetElement("rv:phase_offset")->Get< double >();
 		params[2] = neuron->GetElement("rv:amplitude")->Get< double >();
-	} else {
+	}
+	else if ("Gain" == type) {
+	    types[0] = GAIN;
+
+	    if (!neuron->HasElement("rv:gain")) {
+	        std::cerr << "A `" << type << "` neuron requires 'rv:gain' element." << std::endl;
+			throw std::runtime_error("Robot brain error");
+	    }
+	    params[0] = neuron->GetElement("rv:gain")->Get<double>();
+	}
+	else if ("Bias" == type) {
+	    types[0] = BIAS;
+
+	    if (!neuron->HasElement("rv:bias")) {
+	        std::cerr << "A `" << type << "` neuron requires 'rv:bias' element." << std::endl;
+			throw std::runtime_error("Robot brain error");
+	    }
+	    params[0] = neuron->GetElement("rv:bias")->Get<double>();
+	}
+	else {
 		std::cerr << "Unsupported neuron type `" << type << '`' << std::endl;
 		throw std::runtime_error("Robot brain error");
 	}
@@ -608,7 +565,17 @@ void neuronHelper(double* params, unsigned int* types, const revolve::msgs::Neur
 		params[0] = neuron.param(0).value();
 		params[1] = neuron.param(1).value();
 		params[2] = neuron.param(2).value();
-	} else {
+	}
+	else if ("Gain" == type || "Bias" == type) {
+	    types[0] = "Gain" == type ? GAIN : BIAS;
+
+	    if (neuron.param_size() != 1) {
+	        std::cerr << "A `" << type << "` neuron requires exactly one parameter." << std::endl;
+			throw std::runtime_error("Robot brain error");
+	    }
+	    params[0] = neuron.param(0).value();
+	}
+	else {
 		std::cerr << "Unsupported neuron type `" << type << '`' << std::endl;
 		throw std::runtime_error("Robot brain error");
 	}

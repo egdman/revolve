@@ -27,7 +27,7 @@
 #define MAX_HIDDEN_NEURONS 3000
 
 // Convenience
-#define MAX_NON_INPUT_NEURONS (MAX_INPUT_NEURONS + MAX_OUTPUT_NEURONS)
+#define MAX_NON_INPUT_NEURONS (MAX_HIDDEN_NEURONS + MAX_OUTPUT_NEURONS)
 
 // (bias, tau, gain) or (phase offset, period, gain)
 #define MAX_NEURON_PARAMS 3
@@ -46,7 +46,9 @@ enum neuronType{
 	SIGMOID,
 	CTRNN_SIGMOID,
 	OSCILLATOR,
-	SUPG
+	SUPG,
+	BIAS,
+	GAIN
 };
 
 class NeuralNetwork: public Brain {
@@ -69,6 +71,16 @@ public:
 			double t, double step);
 
 protected:
+    /**
+	 * Handle requests
+	 */
+	void handleRequest(ConstRequestPtr & _msg);
+
+	/**
+	 * Flush the neural network (delete all connections and all hidden neurons)
+	 */
+	void flush();
+
 	/**
 	 * Steps the neural network
 	 */
@@ -91,6 +103,16 @@ protected:
 	 * Network modification subscriber
 	 */
 	::gazebo::transport::SubscriberPtr alterSub_;
+
+	/**
+	 * Publisher for network modification responses
+	 */
+	::gazebo::transport::PublisherPtr responsePub_;
+
+    /**
+     * Name of the robot
+     */
+    std::string modelName_;
 
 	/*
 	 * Connection weights, separated into three arrays for convenience. Note

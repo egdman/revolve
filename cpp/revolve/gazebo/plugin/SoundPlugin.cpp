@@ -39,7 +39,7 @@ void SoundPlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr _sdf)
 void SoundPlugin::OnRequest(ConstRequestPtr & _msg)
 {
 	if (_msg->request() == "set_sound_source_update_frequency") {
-		soundSourcesPosePubFreq_ = boost::lexical_cast<unsigned int>(_msg->data());
+        soundSourcesPosePubFreq_ = boost::lexical_cast<double>(_msg->data());
 		std::cout << "Sound plugin: update frequency set to " << soundSourcesPosePubFreq_ << std::endl;
 		
 		// publish response about successful handling:
@@ -51,11 +51,11 @@ void SoundPlugin::OnRequest(ConstRequestPtr & _msg)
 		
 	}
 	else if (_msg->request() == "add_sound_source") {
-        double wavelength = boost::lexical_cast<double>(_msg->dbl_data());
+        double frequency = boost::lexical_cast<double>(_msg->dbl_data());
 		std::string sourceName = _msg->data();
 		
 		sourceNamesMutex_.lock();
-		soundSourceNames_[sourceName] = wavelength;
+        soundSourceNames_[sourceName] = frequency;
 		sourceNamesMutex_.unlock();
 		
 		// publish response about successful handling:
@@ -66,7 +66,7 @@ void SoundPlugin::OnRequest(ConstRequestPtr & _msg)
 		responsePub_->Publish(resp);
 		
 		// FOR DEBUG; this should be gone in the final version:
-		std::cout << "Sound source added: " << sourceName << ", wavelength: " << wavelength << std::endl;
+        std::cout << "Sound source added: " << sourceName << ", frequency: " << frequency << std::endl;
 	}
 }
 
@@ -75,7 +75,7 @@ void SoundPlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 	if (soundSourcesPosePubFreq_ == 0) {
 		return;
 	}
-	double secs = 1.0 / (double)soundSourcesPosePubFreq_;
+    double secs = 1.0 / soundSourcesPosePubFreq_;
 	double time = _info.simTime.Double();
 	
 
@@ -88,7 +88,7 @@ void SoundPlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 		if (!soundSourceNames_.empty()) {
             for (	std::map<std::string, double>::iterator it = soundSourceNames_.begin(); it != soundSourceNames_.end(); ++it ) {
 				std::string name = it->first;
-                double wavelength = it->second;
+                double frequency = it->second;
 				gz::physics::ModelPtr model = world_->GetModel(name);
 				 
 				gz::msgs::Pose *poseMsg = msg.add_pose();
@@ -99,8 +99,8 @@ void SoundPlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
                 // pose must be converted to an ignition::math::Pose3d object for some reason
 				gz::msgs::Set(poseMsg, modelPose.Ign());
 				
-				// FOR DEBUG; this should be gone in the final version:
-				std::cout << "time: " << time << ", source at: " << modelPose.pos.x << "," << modelPose.pos.y << "," << modelPose.pos.z << std::endl;
+//				// FOR DEBUG; this should be gone in the final version:
+//				std::cout << "time: " << time << ", source at: " << modelPose.pos.x << "," << modelPose.pos.y << "," << modelPose.pos.z << std::endl;
 			}
 		}
 		sourceNamesMutex_.unlock();
