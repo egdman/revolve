@@ -239,6 +239,7 @@ class NeuralNetworkDecoder(object):
             c = brain.connection.add()
             src = conn.get("src", None)
             dst = conn.get("dst", None)
+            socket = conn.get("socket", None)
             c.weight = conn.get("weight", 0)
 
             if src is None:
@@ -255,6 +256,9 @@ class NeuralNetworkDecoder(object):
 
             if self.neurons[dst]["layer"] == "input":
                 err("Using input neuron '%s' as destination." % dst)
+
+            if socket is not None:
+                c.socket = socket
 
             c.src = src
             c.dst = dst
