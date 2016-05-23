@@ -69,4 +69,7 @@ class NeuralConnection(Element):
             'weight': nf(self.conn.weight)
         })
 
+        if self.conn.HasField('socket'):
+            attrs.update({'socket' : self.conn.socket})
+
         return attrs
