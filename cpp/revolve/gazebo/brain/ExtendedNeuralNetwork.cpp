@@ -176,11 +176,21 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 
 		auto src = connection->GetAttribute("src")->GetAsString();
 		auto dst = connection->GetAttribute("dst")->GetAsString();
+
+
+		std::string dstSocketName;
+		if (connection->HasAttribute("socket")) {
+			dstSocketName = connection->GetAttribute("socket")->GetAsString();
+		}
+		else {
+			dstSocketName = "None";
+		}
+
 		double weight;
 		connection->GetAttribute("weight")->Get(weight);
 
 		// Use connection helper to set the weight
-		connectionHelper(src, dst, weight, idToNeuron);
+		connectionHelper(src, dst, dstSocketName, weight, idToNeuron);
 
 		// Load the next connection
 		connection = connection->GetNextElement("rv:neural_connection");
@@ -195,8 +205,8 @@ ExtendedNeuralNetwork::~ExtendedNeuralNetwork()
 }
 
 
-void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::string &dst, double weight,
-	const std::map<std::string, NeuronPtr> &idToNeuron)
+void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::string &dst,
+	std::string socket, double weight, const std::map<std::string, NeuronPtr> &idToNeuron)
 {
 	auto srcNeuron = idToNeuron.find(src);
 	if (srcNeuron == idToNeuron.end()) {
@@ -210,13 +220,18 @@ void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::
 		throw std::runtime_error("Robot brain error");
 	}
 
+	if (socket == 'None') {
+		socket = (dstNeuron->second)->GetUniqueSocketId();
+	}
+
+
 	NeuralConnectionPtr newConnection(new NeuralConnection(
 		srcNeuron->second,
 		dstNeuron->second,
 		weight
 	));
 
-	(dstNeuron->second)->AddIncomingConnection(newConnection);
+	(dstNeuron->second)->AddIncomingConnection(socket, newConnection);
 	connections_.push_back(newConnection);
 }
 

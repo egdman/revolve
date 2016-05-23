@@ -5,6 +5,7 @@ message NeuralConnection {
   required string src = 1;
   required string dst = 2;
   required double weight = 3;
+  optional string socket = 4;
 }
 
 message Neuron {

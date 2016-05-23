@@ -22,7 +22,7 @@ double SigmoidNeuron::CalculateOutput(double /*t*/)
 
 	for (auto it = this->incomingConnections_.begin(); it != this->incomingConnections_.end(); ++it)
 	{
-		auto inConnection = *it;
+		auto inConnection = it->second;
 		inputValue += inConnection->GetInputNeuron()->GetOutput() * inConnection->GetWeight();
 	}
 

@@ -2,6 +2,7 @@
 #define REVOLVE_GAZEBO_BRAIN_NEURON_H_
 
 #include "Brain.h"
+#include <cstdlib>
 
 namespace revolve {
 namespace gazebo {
@@ -14,7 +15,7 @@ public:
 	virtual ~Neuron() {};
 	virtual double CalculateOutput(double t) = 0;
 
-	void AddIncomingConnection(const NeuralConnectionPtr &connection);
+	void AddIncomingConnection(const std::string &socketName, const NeuralConnectionPtr &connection);
 
 	double GetOutput() const;
 
@@ -24,8 +25,10 @@ public:
 
 	void FlipState();
 
+	std::string GetUniqueSocketId() const;
+
 protected:
-	std::vector<NeuralConnectionPtr> incomingConnections_;
+	std::map<std::string, NeuralConnectionPtr> incomingConnections_;
 	double output_;
 	double newOutput_;
 
