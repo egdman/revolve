@@ -169,6 +169,7 @@ class NeuralNetworkDecoder(object):
                 neuron_id = "%s-%s-%d" % (part_id, cat, i)
                 if neuron_id in self.neurons:
                     err("Duplicate neuron ID '%s'" % neuron_id)
+ #                   print 'warning: overriding neuron: {0}'.format(neuron_id)
 
                 self.neurons[neuron_id] = {
                     "layer": "%sput" % cat,
@@ -198,6 +199,9 @@ class NeuralNetworkDecoder(object):
         if spec is None:
             err("Unknown neuron type '%s'" % current["type"])
 
+        if 'layer' not in current or 'layer' in conf:
+            current['layer'] = conf.get('layer', 'hidden')
+
         current["params"] = spec.serialize_params(conf)
 
     def _create_hidden_neurons(self, neurons):
@@ -207,7 +211,10 @@ class NeuralNetworkDecoder(object):
         """
         for neuron_id in neurons:
             if neuron_id in self.neurons:
-                err("Duplicate neuron ID '%s'" % neuron_id)
+                if self.neurons[neuron_id]['layer'] == 'hidden':
+                    err("Duplicate neuron ID '%s'" % neuron_id)
+                else:
+                    print "Warning: overriding neuron {0}".format(neuron_id)
 
             # This sets the defaults, the accurate values - if present - will
             # be set by `_process_neuron_params`.
