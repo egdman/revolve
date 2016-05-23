@@ -57,8 +57,8 @@ protected:
 
 	NeuronPtr neuronHelper(sdf::ElementPtr neuron);
 
-	void connectionHelper(const std::string &src, const std::string &dst, double weight,
-		const std::map<std::string, NeuronPtr> &idToNeuron);
+	void connectionHelper(const std::string &src, const std::string &dst,
+	std::string socket, double weight, const std::map<std::string, NeuronPtr> &idToNeuron);
 
 
 	void modify(ConstModifyNeuralNetworkPtr &req);

@@ -11,8 +11,7 @@ class NeuralConnection
 public:
 	NeuralConnection(const NeuronPtr &src, const NeuronPtr &dst, double weight);
 	double GetWeight() const;
-//	NeuronPtr GetInputNeuron() const;
-	double GetInput() const;
+	NeuronPtr GetInputNeuron() const;
 
 protected:
 	double weight_;

@@ -181,10 +181,15 @@ class NeuralNetworkEncoder:
             conn_dst = conn.dst
             conn_weight = conn.weight
 
-            self.connections.append({
+            conn_data = {
                 'src': conn_src,
                 'dst': conn_dst,
                 'weight': conn_weight
-            })
+            }
+
+            if conn.HasField('socket'):
+                conn_data['socket'] = conn.socket
+
+            self.connections.append(conn_data)
 
 

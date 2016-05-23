@@ -220,7 +220,7 @@ void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::
 		throw std::runtime_error("Robot brain error");
 	}
 
-	if (socket == 'None') {
+	if (socket == "None") {
 		socket = (dstNeuron->second)->GetUniqueSocketId();
 	}
 
