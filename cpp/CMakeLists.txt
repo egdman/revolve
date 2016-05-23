@@ -159,6 +159,11 @@ target_link_libraries(revolve-body-analyzer revolve-gazebo revolve-spec ${GAZEBO
 add_executable(body-analyzer revolve/gazebo/standalone/body_analyzer_server.cpp)
 target_link_libraries(body-analyzer revolve-body-analyzer ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
 
+# Add neural network test executable
+add_executable(network-test revolve/gazebo/test/NeuralNetworkTest.cpp)
+target_link_libraries(network-test revolve-gazebo ${GAZEBO_LIBRARIES} ${Boost_LIBRARIES})
+
+
 # Install libraries into "lib", header files into "include"
 install(
     TARGETS revolve-spec revolve-gazebo

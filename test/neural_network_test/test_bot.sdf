@@ -1,0 +1,385 @@
+<?xml version="1.0"?>
+<sdf version="1.5"><model name="gen__6"><pose>0.000000e+00 0.000000e+00 2.000000e-01 0.000000e+00 -0.000000e+00 -1.872231e-01</pose>
+<link name="link_component_Core__box"><pose>4.063281e-20 -3.940631e-03 1.015820e-20 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<visual name="component_Core__box_visual"><pose>-4.063281e-20 3.940631e-03 -1.015820e-20 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/CoreComponent.dae</uri></mesh></geometry></visual>
+<collision name="component_Core__box_collision"><pose>-4.063281e-20 3.940631e-03 -1.015820e-20 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>9.000000e-02 9.000000e-02 4.500000e-02</size></box></geometry></collision>
+<sensor type="imu" name="Core-imu_sensor"><pose>-4.063281e-20 3.940631e-03 -1.015820e-20 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<update_rate>1.000000e+01</update_rate>
+<always_on>1</always_on></sensor>
+<visual name="component_Leg00Joint__root_visual"><pose>1.259006e-19 -4.180937e-02 3.147516e-20 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></visual>
+<collision name="component_Leg00Joint__root_collision"><pose>1.259006e-19 -4.180937e-02 3.147516e-20 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg00Joint__frame_frame_visual"><pose>2.313040e-18 -5.165937e-02 5.782600e-19 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveHinge_Frame.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg00Joint__frame_collision"><pose>2.313040e-18 -5.165937e-02 5.782600e-19 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.800000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<inertial><mass>9.820000e-02</mass><inertia><ixx>9.359731e-05</ixx><ixy>-1.784288e-22</ixy><ixz>-2.344696e-22</ixz><iyy>7.741177e-05</iyy><iyz>2.059805e-22</iyz><izz>1.390542e-04</izz></inertia></inertial>
+<self_collide>True</self_collide></link>
+<link name="link_component_Leg00Joint__servo"><pose>1.638200e-17 -9.529797e-02 7.873596e-20 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<visual name="component_Leg00Joint__servo_servo_visual"><pose>-1.108624e-17 2.644797e-02 1.245205e-18 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveCardanHinge_Servo_Holder.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg00Joint__servo_collision"><pose>-1.108624e-17 2.644797e-02 1.245205e-18 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>2.450000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<collision name="component_Leg00Joint__tail_collision"><pose>-8.177453e-18 1.334797e-02 1.972401e-18 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg00__box_visual"><pose>6.530768e-18 -7.902035e-03 -3.481570e-18 2.220446e-16 -2.835742e-16 -3.141593e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/FixedBrick.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg00__box_collision"><pose>6.530768e-18 -7.902035e-03 -3.481570e-18 2.220446e-16 -2.835742e-16 -3.141593e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>4.100000e-02 4.100000e-02 3.550000e-02</size></box></geometry></collision>
+<visual name="component_Leg01Joint__root_visual"><pose>1.102494e-17 -2.915203e-02 1.142195e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></visual>
+<collision name="component_Leg01Joint__root_collision"><pose>1.102494e-17 -2.915203e-02 1.142195e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg01Joint__frame_frame_visual"><pose>1.102494e-17 -3.900203e-02 2.085827e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveHinge_Frame.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg01Joint__frame_collision"><pose>1.102494e-17 -3.900203e-02 2.085827e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.800000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<inertial><mass>3.440000e-02</mass><inertia><ixx>2.116476e-05</ixx><ixy>6.075862e-21</ixy><ixz>-4.523936e-22</ixz><iyy>6.264996e-06</iyy><iyz>-1.407230e-22</iyz><izz>2.083600e-05</izz></inertia></inertial>
+<self_collide>True</self_collide></link>
+<link name="link_component_Leg01Joint__servo"><pose>2.798452e-17 -1.739980e-01 8.150769e-18 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<visual name="component_Leg01Joint__servo_servo_visual"><pose>-5.775784e-19 2.644797e-02 -4.716854e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveCardanHinge_Servo_Holder.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg01Joint__servo_collision"><pose>-5.775784e-19 2.644797e-02 -4.716854e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>2.450000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<collision name="component_Leg01Joint__tail_collision"><pose>-5.775784e-19 1.334797e-02 -3.461872e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg01__box_visual"><pose>1.935976e-20 -7.902035e-03 1.161892e-18 2.220446e-16 -4.098187e-16 -3.141593e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/FixedBrick.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg01__box_collision"><pose>1.935976e-20 -7.902035e-03 1.161892e-18 2.220446e-16 -4.098187e-16 -3.141593e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>4.100000e-02 4.100000e-02 3.550000e-02</size></box></geometry></collision>
+<visual name="component_Leg02Joint__root_visual"><pose>7.828313e-19 -2.915203e-02 6.046873e-18 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></visual>
+<collision name="component_Leg02Joint__root_collision"><pose>7.828313e-19 -2.915203e-02 6.046873e-18 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg02Joint__frame_frame_visual"><pose>2.969971e-18 -3.900203e-02 1.042115e-17 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveHinge_Frame.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg02Joint__frame_collision"><pose>2.969971e-18 -3.900203e-02 1.042115e-17 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.800000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<inertial><mass>3.440000e-02</mass><inertia><ixx>2.047836e-05</ixx><ixy>4.917586e-22</ixy><ixz>4.875545e-22</ixz><iyy>6.264996e-06</iyy><iyz>2.976608e-21</iyz><izz>2.152240e-05</izz></inertia></inertial>
+<self_collide>True</self_collide></link>
+<link name="link_component_Leg02Joint__servo"><pose>4.498281e-17 -2.526980e-01 5.004713e-17 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<visual name="component_Leg02Joint__servo_servo_visual"><pose>-1.108624e-17 2.644797e-02 -2.559102e-17 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveCardanHinge_Servo_Holder.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg02Joint__servo_collision"><pose>-1.108624e-17 2.644797e-02 -2.559102e-17 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>2.450000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<collision name="component_Leg02Joint__tail_collision"><pose>-8.177453e-18 1.334797e-02 -1.977346e-17 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg02__box_visual"><pose>6.530768e-18 -7.902035e-03 1.082429e-17 8.881784e-16 -1.110223e-16 -3.141593e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/FixedBrick.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg02__box_collision"><pose>6.530768e-18 -7.902035e-03 1.082429e-17 8.881784e-16 -1.110223e-16 -3.141593e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>4.100000e-02 4.100000e-02 3.550000e-02</size></box></geometry></collision>
+<visual name="component_Leg03Joint__root_visual"><pose>1.102494e-17 -2.915203e-02 2.987768e-17 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></visual>
+<collision name="component_Leg03Joint__root_collision"><pose>1.102494e-17 -2.915203e-02 2.987768e-17 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg03Joint__frame_frame_visual"><pose>1.102494e-17 -3.900203e-02 4.098490e-17 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveHinge_Frame.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg03Joint__frame_collision"><pose>1.102494e-17 -3.900203e-02 4.098490e-17 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.800000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<inertial><mass>3.440000e-02</mass><inertia><ixx>2.116476e-05</ixx><ixy>6.695116e-21</ixy><ixz>-8.305685e-23</ixz><iyy>6.264996e-06</iyy><iyz>1.592663e-20</iyz><izz>2.083600e-05</izz></inertia></inertial>
+<self_collide>True</self_collide></link>
+<link name="link_component_Leg03Joint__servo"><pose>5.615732e-17 -3.218229e-01 1.213165e-16 0.000000e+00 -0.000000e+00 0.000000e+00</pose>
+<visual name="component_Leg03Joint__servo_servo_visual"><pose>-1.495709e-19 1.687290e-02 -1.534329e-17 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/ActiveCardanHinge_Servo_Holder.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg03Joint__servo_collision"><pose>-1.495709e-19 1.687290e-02 -1.534329e-17 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>2.450000e-02 3.400000e-02 1.000000e-02</size></box></geometry></collision>
+<collision name="component_Leg03Joint__tail_collision"><pose>-1.495709e-19 3.772901e-03 -5.712429e-19 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>1.500000e-03 3.400000e-02 3.400000e-02</size></box></geometry></collision>
+<visual name="component_Leg03__box_visual"><pose>2.346210e-19 -1.747710e-02 1.393023e-17 6.661338e-16 1.284366e-16 -3.141593e+00</pose>
+<material><ambient>0.50 0.50 0.50 1.00</ambient><diffuse>0.50 0.50 0.50 1.00</diffuse><specular>0.1 0.1 0.1 1.00</specular></material>
+<geometry><mesh><uri>model://tol_robot/meshes/FixedBrick.dae</uri></mesh></geometry></visual>
+<collision name="component_Leg03__box_collision"><pose>2.346210e-19 -1.747710e-02 1.393023e-17 6.661338e-16 1.284366e-16 -3.141593e+00</pose>
+<surface><contact><ode><kd>9.000000e+04</kd><kp>2.000000e+06</kp></ode></contact>
+<friction><ode><mu>1.000000e+00</mu>
+<mu2>1.000000e+00</mu2>
+<slip1>1.000000e-02</slip1>
+<slip2>1.000000e-02</slip2></ode>
+<bullet><friction>1.000000e+00</friction>
+<friction2>1.000000e+00</friction2></bullet></friction></surface>
+<geometry><box><size>4.100000e-02 4.100000e-02 3.550000e-02</size></box></geometry></collision>
+<inertial><mass>2.620000e-02</mass><inertia><ixx>9.478372e-06</ixx><ixy>6.848852e-23</ixy><ixz>-1.476556e-22</ixz><iyy>4.790729e-06</iyy><iyz>4.730738e-21</iyz><izz>1.062801e-05</izz></inertia></inertial>
+<self_collide>True</self_collide></link>
+<joint type="revolute" name="joint_link_component_Leg03Joint__servo_link_component_Leg02Joint__servo"><pose>1.102494e-17 -4.400203e-02 4.662309e-17 1.284366e-16 -1.127637e-15 -1.570796e+00</pose>
+<parent>link_component_Leg03Joint__servo</parent>
+<child>link_component_Leg02Joint__servo</child>
+<axis><xyz>0.000000e+00 1.000000e+00 0.000000e+00</xyz>
+<use_parent_model_frame>0</use_parent_model_frame>
+<limit><lower>-7.853982e-01</lower>
+<upper>7.853982e-01</upper>
+<effort>1.765800e-01</effort>
+<velocity>5.235988e+00</velocity></limit></axis></joint>
+<joint type="revolute" name="joint_link_component_Leg02Joint__servo_link_component_Leg01Joint__servo"><pose>4.080194e-18 -4.400203e-02 1.264160e-17 -1.570796e+00 -4.440892e-16 -1.570796e+00</pose>
+<parent>link_component_Leg02Joint__servo</parent>
+<child>link_component_Leg01Joint__servo</child>
+<axis><xyz>0.000000e+00 1.000000e+00 0.000000e+00</xyz>
+<use_parent_model_frame>0</use_parent_model_frame>
+<limit><lower>-7.853982e-01</lower>
+<upper>7.853982e-01</upper>
+<effort>1.765800e-01</effort>
+<velocity>5.235988e+00</velocity></limit></axis></joint>
+<joint type="revolute" name="joint_link_component_Leg01Joint__servo_link_component_Leg00Joint__servo"><pose>1.102494e-17 -4.400203e-02 2.564827e-18 -4.098187e-16 -9.580016e-17 -1.570796e+00</pose>
+<parent>link_component_Leg01Joint__servo</parent>
+<child>link_component_Leg00Joint__servo</child>
+<axis><xyz>0.000000e+00 1.000000e+00 0.000000e+00</xyz>
+<use_parent_model_frame>0</use_parent_model_frame>
+<limit><lower>-7.853982e-01</lower>
+<upper>7.853982e-01</upper>
+<effort>1.765800e-01</effort>
+<velocity>5.235988e+00</velocity></limit></axis></joint>
+<joint type="revolute" name="joint_link_component_Leg00Joint__servo_link_component_Core__box"><pose>3.423263e-18 -5.665937e-02 8.558158e-19 1.570796e+00 -5.551115e-17 -1.570796e+00</pose>
+<parent>link_component_Leg00Joint__servo</parent>
+<child>link_component_Core__box</child>
+<axis><xyz>0.000000e+00 1.000000e+00 0.000000e+00</xyz>
+<use_parent_model_frame>0</use_parent_model_frame>
+<limit><lower>-7.853982e-01</lower>
+<upper>7.853982e-01</upper>
+<effort>1.765800e-01</effort>
+<velocity>5.235988e+00</velocity></limit></axis></joint>
+<plugin name="robot_controller" filename="libtolrobotcontrol.so"><rv:robot_config xmlns:rv="https://github.com/ElteHupkes/revolve"><rv:update_rate>1.000000e+01</rv:update_rate>
+<rv:brain><rv:neuron layer="input" type="Input" id="Core-in-0" part_id="Core" />
+<rv:neuron layer="input" type="Input" id="Core-in-1" part_id="Core" />
+<rv:neuron layer="input" type="Input" id="Core-in-2" part_id="Core" />
+<rv:neuron layer="input" type="Input" id="Core-in-3" part_id="Core" />
+<rv:neuron layer="input" type="Input" id="Core-in-4" part_id="Core" />
+<rv:neuron layer="input" type="Input" id="Core-in-5" part_id="Core" />
+<rv:neuron layer="output" type="Simple" id="Leg00Joint-out-0" part_id="Leg00Joint"><rv:bias>0.000000e+00</rv:bias>
+<rv:gain>0.000000e+00</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg00Joint-hidden-0" part_id="Leg00Joint"><rv:bias>-1.000000e+00</rv:bias>
+<rv:gain>5.000000e-01</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg00Joint-hidden-1" part_id="Leg00Joint"><rv:bias>-1.000000e+00</rv:bias>
+<rv:gain>5.000000e-01</rv:gain></rv:neuron>
+<rv:neuron layer="output" type="Simple" id="Leg01Joint-out-0" part_id="Leg01Joint"><rv:bias>0.000000e+00</rv:bias>
+<rv:gain>1.000000e+00</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg01Joint-hidden-0" part_id="Leg01Joint"><rv:bias>0.000000e+00</rv:bias>
+<rv:gain>1.000000e+00</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg01Joint-hidden-1" part_id="Leg01Joint"><rv:bias>1.000000e+00</rv:bias>
+<rv:gain>5.000000e-01</rv:gain></rv:neuron>
+<rv:neuron layer="output" type="Simple" id="Leg02Joint-out-0" part_id="Leg02Joint"><rv:bias>1.728954e-01</rv:bias>
+<rv:gain>5.000000e-01</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg02Joint-hidden-0" part_id="Leg02Joint"><rv:bias>-1.000000e+00</rv:bias>
+<rv:gain>5.000000e-01</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg02Joint-hidden-1" part_id="Leg02Joint"><rv:bias>1.000000e+00</rv:bias>
+<rv:gain>5.000000e-01</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg03Joint-hidden-0" part_id="Leg03Joint"><rv:bias>0.000000e+00</rv:bias>
+<rv:gain>6.900763e-01</rv:gain></rv:neuron>
+<rv:neuron layer="hidden" type="Simple" id="Leg03Joint-hidden-1" part_id="Leg03Joint"><rv:bias>-3.960977e-01</rv:bias>
+<rv:gain>5.000000e-01</rv:gain></rv:neuron>
+<rv:neuron layer="output" type="Simple" id="Leg03Joint-out-0" part_id="Leg03Joint"><rv:bias>0.000000e+00</rv:bias>
+<rv:gain>1.000000e+00</rv:gain></rv:neuron>
+<rv:neural_connection src="Core-in-3" dst="Leg00Joint-hidden-1" weight="5.053437e-01" />
+<rv:neural_connection src="Core-in-2" dst="Leg00Joint-hidden-1" weight="4.563751e-01" />
+<rv:neural_connection src="Core-in-5" dst="Leg00Joint-hidden-1" weight="-4.578764e+00" />
+<rv:neural_connection src="Core-in-4" dst="Leg00Joint-hidden-1" weight="-1.041580e+00" />
+<rv:neural_connection src="Core-in-1" dst="Leg00Joint-hidden-1" weight="6.536708e+00" />
+<rv:neural_connection src="Core-in-0" dst="Leg00Joint-hidden-1" weight="-1.843473e+00" />
+<rv:neural_connection src="Leg00Joint-hidden-1" dst="Leg00Joint-hidden-0" weight="-7.371820e+00" />
+<rv:neural_connection src="Leg00Joint-hidden-0" dst="Leg00Joint-hidden-1" weight="-8.523181e+00" />
+<rv:neural_connection src="Leg00Joint-hidden-1" dst="Leg00Joint-hidden-1" weight="1.000000e+00" />
+<rv:neural_connection src="Leg00Joint-hidden-0" dst="Leg00Joint-hidden-0" weight="-1.380752e+00" />
+<rv:neural_connection src="Leg00Joint-hidden-1" dst="Leg00Joint-out-0" weight="-1.692309e+00" />
+<rv:neural_connection src="Leg00Joint-out-0" dst="Leg00Joint-hidden-0" weight="1.002560e+00" />
+<rv:neural_connection src="Leg00Joint-hidden-1" dst="Leg01Joint-hidden-0" weight="7.081829e+00" />
+<rv:neural_connection src="Leg01Joint-hidden-0" dst="Leg01Joint-hidden-1" weight="4.698510e+00" />
+<rv:neural_connection src="Leg01Joint-hidden-1" dst="Leg01Joint-hidden-0" weight="1.000000e+00" />
+<rv:neural_connection src="Leg01Joint-hidden-0" dst="Leg01Joint-hidden-0" weight="1.000000e+00" />
+<rv:neural_connection src="Leg01Joint-hidden-1" dst="Leg01Joint-hidden-1" weight="2.511231e+00" />
+<rv:neural_connection src="Leg01Joint-hidden-0" dst="Leg01Joint-out-0" weight="1.006363e+00" />
+<rv:neural_connection src="Leg01Joint-out-0" dst="Leg01Joint-hidden-1" weight="5.168221e-01" />
+<rv:neural_connection src="Leg01Joint-hidden-0" dst="Leg02Joint-hidden-1" weight="1.000000e+00" />
+<rv:neural_connection src="Leg01Joint-hidden-0" dst="Leg00Joint-hidden-1" weight="1.263108e+00" />
+<rv:neural_connection src="Leg02Joint-hidden-1" dst="Leg02Joint-hidden-0" weight="-6.049811e+00" />
+<rv:neural_connection src="Leg02Joint-hidden-0" dst="Leg02Joint-hidden-1" weight="-3.916482e+00" />
+<rv:neural_connection src="Leg02Joint-hidden-1" dst="Leg02Joint-hidden-1" weight="5.691739e-02" />
+<rv:neural_connection src="Leg02Joint-hidden-0" dst="Leg02Joint-hidden-0" weight="4.739924e+00" />
+<rv:neural_connection src="Leg02Joint-hidden-1" dst="Leg02Joint-out-0" weight="-1.430093e+00" />
+<rv:neural_connection src="Leg02Joint-out-0" dst="Leg02Joint-hidden-0" weight="5.863530e+00" />
+<rv:neural_connection src="Leg02Joint-hidden-1" dst="Leg03Joint-hidden-0" weight="1.595361e+00" />
+<rv:neural_connection src="Leg02Joint-hidden-1" dst="Leg01Joint-hidden-0" weight="-3.523152e+00" />
+<rv:neural_connection src="Leg03Joint-hidden-0" dst="Leg03Joint-hidden-1" weight="2.732869e+00" />
+<rv:neural_connection src="Leg03Joint-hidden-1" dst="Leg03Joint-hidden-0" weight="8.576115e+00" />
+<rv:neural_connection src="Leg03Joint-hidden-0" dst="Leg03Joint-hidden-0" weight="7.203121e+00" />
+<rv:neural_connection src="Leg03Joint-hidden-1" dst="Leg03Joint-hidden-1" weight="1.000000e+00" />
+<rv:neural_connection src="Leg03Joint-hidden-0" dst="Leg03Joint-out-0" weight="3.597938e+00" />
+<rv:neural_connection src="Leg03Joint-out-0" dst="Leg03Joint-hidden-1" weight="4.362182e+00" />
+<rv:neural_connection src="Leg03Joint-hidden-0" dst="Leg02Joint-hidden-1" weight="5.111156e-01" /></rv:brain>
+<rv:sensor link="link_component_Core__box" sensor="Core-imu_sensor" id="Core__Core-imu_sensor" part_id="Core" type="imu" />
+<rv:motor joint="joint_link_component_Leg00Joint__servo_link_component_Core__box" type="position" id="Leg00Joint__rotate" part_id="Leg00Joint"><rv:pid><rv:p>9.000000e-01</rv:p>
+<rv:i>0.000000e+00</rv:i>
+<rv:d>0.000000e+00</rv:d>
+<rv:i_max>0.000000e+00</rv:i_max>
+<rv:i_min>0.000000e+00</rv:i_min></rv:pid></rv:motor>
+<rv:motor joint="joint_link_component_Leg01Joint__servo_link_component_Leg00Joint__servo" type="position" id="Leg01Joint__rotate" part_id="Leg01Joint"><rv:pid><rv:p>9.000000e-01</rv:p>
+<rv:i>0.000000e+00</rv:i>
+<rv:d>0.000000e+00</rv:d>
+<rv:i_max>0.000000e+00</rv:i_max>
+<rv:i_min>0.000000e+00</rv:i_min></rv:pid></rv:motor>
+<rv:motor joint="joint_link_component_Leg02Joint__servo_link_component_Leg01Joint__servo" type="position" id="Leg02Joint__rotate" part_id="Leg02Joint"><rv:pid><rv:p>9.000000e-01</rv:p>
+<rv:i>0.000000e+00</rv:i>
+<rv:d>0.000000e+00</rv:d>
+<rv:i_max>0.000000e+00</rv:i_max>
+<rv:i_min>0.000000e+00</rv:i_min></rv:pid></rv:motor>
+<rv:motor joint="joint_link_component_Leg03Joint__servo_link_component_Leg02Joint__servo" type="position" id="Leg03Joint__rotate" part_id="Leg03Joint"><rv:pid><rv:p>9.000000e-01</rv:p>
+<rv:i>0.000000e+00</rv:i>
+<rv:d>0.000000e+00</rv:d>
+<rv:i_max>0.000000e+00</rv:i_max>
+<rv:i_min>0.000000e+00</rv:i_min></rv:pid></rv:motor></rv:robot_config></plugin>
+<static>0</static></model></sdf>

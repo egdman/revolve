@@ -50,6 +50,7 @@ void PositionMotor::update(double *outputs, double /*step*/) {
 	// Just one network output, which is the first
 	double output = outputs[0];
 
+
 	// Motor noise in range +/- noiseLevel * actualValue
 	output += ((2 * gz::math::Rand::GetDblUniform() * noise_) -
 					  noise_) * output;

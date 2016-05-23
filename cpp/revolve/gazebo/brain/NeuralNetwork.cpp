@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 #include <sstream>
+ #include <fstream>
 #include <cmath>
 
 namespace gz = gazebo;
@@ -340,6 +341,7 @@ void NeuralNetwork::step(double time) {
 void NeuralNetwork::update(const std::vector<MotorPtr>& motors,
 		const std::vector<SensorPtr>& sensors,
 		double t, double step) {
+
 	boost::mutex::scoped_lock lock(networkMutex_);
 
 	// Read sensor data and feed the neural network
@@ -358,7 +360,7 @@ void NeuralNetwork::update(const std::vector<MotorPtr>& motors,
 	// Send new signals to the motors
 	p = 0;
 	for (auto motor: motors) {
-		motor->update(&output[p], step);
+		motor->update(&output[p], step);	
 		p += motor->outputs();
 	}
 }
@@ -383,8 +385,6 @@ void NeuralNetwork::flush()
 		auto neuronId = it->first;
 
 		if ("hidden" == layerMap_[neuronId]) {
-
-//		    std::cout << neuronId << ":  erase" << std::endl;
 
 			positionMap_.erase(neuronId);
 			layerMap_.erase(neuronId);

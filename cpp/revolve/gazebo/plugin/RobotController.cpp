@@ -8,6 +8,8 @@
 #include <revolve/gazebo/motors/MotorFactory.h>
 #include <revolve/gazebo/sensors/SensorFactory.h>
 #include <revolve/gazebo/brain/NeuralNetwork.h>
+#include <revolve/gazebo/brain/ExtendedNeuralNetwork.h>
+
 
 #include <gazebo/transport/transport.hh>
 #include <gazebo/sensors/sensors.hh>
@@ -110,7 +112,13 @@ void RobotController::loadBrain(sdf::ElementPtr sdf) {
 		return;
 	}
 	auto brain = sdf->GetElement("rv:brain");
-	brain_.reset(new NeuralNetwork(this->model->GetName(), brain, motors_, sensors_));
+
+	// brain_.reset(new NeuralNetwork(this->model->GetName(), brain, motors_, sensors_));
+
+	// Use new neural network implementation
+	brain_.reset(new ExtendedNeuralNetwork(this->model->GetName(), brain, motors_, sensors_));
+
+	
 }
 
 // Default startup, bind to CheckUpdate
