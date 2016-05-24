@@ -95,7 +95,7 @@ class Tree(object):
             dst_neuron = neuron_map[conn.dst]
             src_node = tree.get_node(src_neuron.partId)
             dst_node = tree.get_node(dst_neuron.partId)
-            src_node.add_neural_connection(src_neuron, dst_neuron, dst_node, conn.weight)
+            src_node.add_neural_connection(src_neuron, dst_neuron, dst_node, conn)
 
         return tree
 
@@ -248,11 +248,13 @@ class Node(object):
             counters[nw.layer] += 1
 
         # Process neuron connections
-        for src, dst, weight in self.get_traversed_neural_connections():
+        for src, dst, weight, socket in self.get_traversed_neural_connections():
             conn = brain.connection.add()
             conn.src = src
             conn.dst = dst
             conn.weight = weight
+            if socket is not None:
+                conn.socket = socket
 
         # Delete any present body child connections,
         # they will be recreated from node connections
@@ -506,7 +508,7 @@ class Node(object):
                 continue
 
             taken.add(pair)
-            yield (src_id, dst_id, conn.weight)
+            yield (src_id, dst_id, conn.weight, conn.socket)
 
     def child_connections(self):
         """
@@ -602,7 +604,7 @@ class Node(object):
         """
         return sum(1 for neuron in self._neurons if neuron.layer == neuron_layer)
 
-    def add_neural_connection(self, src, dst, dst_part, weight):
+    def add_neural_connection(self, src, dst, dst_part, pb_connection):
         """
         :param src:
         :type src: Neuron
@@ -610,18 +612,21 @@ class Node(object):
         :type dst: Neuron
         :param dst_part:
         :type dst_part: Node
-        :param weight:
+        :param pb_connection:
+        :type pb_connection: protobuf NeuralConnection
         """
         self.clear_caches()
         path = self.get_path(dst_part)
 
         src_offset = self.get_neuron_offset(src)
         dst_offset = dst_part.get_neuron_offset(dst)
+
         self._neural_connections.append(NeuralConnection(
             (src.layer, src_offset),
             (dst.layer, dst_offset),
             path,
-            weight
+            pb_connection.weight,
+            pb_connection.socket if pb_connection.HasField('socket') else None
         ))
 
     def set_neural_connections(self, connections):
@@ -663,7 +668,7 @@ class NeuralConnection(object):
     Brain connection
     """
 
-    def __init__(self, src, dst, path, weight):
+    def __init__(self, src, dst, path, weight, socket=None):
         """
         :param src: (layer, offset) tuple
         :param dst: (layer, offset) tuple
@@ -679,3 +684,4 @@ class NeuralConnection(object):
         self.dst = dst
         self.weight = weight
         self.path = tuple(path)
+        self.socket = socket
