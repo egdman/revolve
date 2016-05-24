@@ -50,11 +50,15 @@ void PositionMotor::update(double *outputs, double /*step*/) {
 	// Just one network output, which is the first
 	double output = outputs[0];
 
+	// std::ofstream outFile;
+	// outFile.open("/home/dmitry/projects/debug/motor_signals.log", std::ofstream::app | std::ofstream::out);
 
 	// Motor noise in range +/- noiseLevel * actualValue
 	output += ((2 * gz::math::Rand::GetDblUniform() * noise_) -
 					  noise_) * output;
 
+	// outFile << motorId_ << ":  " << output << std::endl;
+	// outFile.close();
 	// Truncate output to [0, 1]
 	// HACK Don't actually target the full joint range, this way
 	// a low update rate won't mess with the joint constraints as much leading

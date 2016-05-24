@@ -223,7 +223,7 @@ void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::
 	}
 
 	if (socket == "None") {
-		socket = (dstNeuron->second)->GetUniqueSocketId();
+		socket = (dstNeuron->second)->GetSocketId();
 	}
 
 
@@ -269,6 +269,12 @@ NeuronPtr ExtendedNeuralNetwork::neuronHelper(sdf::ElementPtr neuron)
 		}
 		else if ("Oscillator" == type) {
 			newNeuron.reset(new OscillatorNeuron(neuron));
+		}
+		else if ("V-Neuron" == type) {
+			newNeuron.reset(new VOscillator(neuron));
+		}
+		else if ("X-Neuron" == type) {
+			newNeuron.reset(new XOscillator(neuron));
 		}
 		else {
 			std::cerr << "Unsupported neuron type `" << type << '`' << std::endl;

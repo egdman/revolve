@@ -11,6 +11,9 @@
 #include "LinearNeuron.h"
 #include "SigmoidNeuron.h"
 #include "OscillatorNeuron.h"
+#include "VOscillator.h"
+#include "XOscillator.h"
+
 #include "InputNeuron.h"
 
 #include <gazebo/gazebo.hh>

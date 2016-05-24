@@ -12,12 +12,7 @@ Neuron::Neuron()
 
 void Neuron::AddIncomingConnection(const std::string &socketName, NeuralConnectionPtr connection)
 {
-	if (this->incomingConnections_.count(socketName)) {
-		std::cerr << "Neuron socket '" << socketName << "' is already used" << std::endl;
-		throw std::runtime_error("Robot brain error");
-	}
-
-	this->incomingConnections_[socketName] = connection;
+	this->incomingConnections_.push_back(std::pair<std::string, NeuralConnectionPtr>(socketName, connection));
 }
 
 
@@ -39,14 +34,9 @@ double Neuron::GetOutput() const
 }
 
 
-std::string Neuron::GetUniqueSocketId() const
+std::string Neuron::GetSocketId() const
 {
-	int id = rand();
-
-	while (this->incomingConnections_.count(std::to_string(id))) {
-		id = rand();
-	}
-	return std::to_string(id);
+	return std::to_string( this->incomingConnections_.size() );
 }
 
 

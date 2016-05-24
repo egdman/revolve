@@ -3,6 +3,7 @@
 
 #include "Brain.h"
 #include <cstdlib>
+#include <utility>
 
 namespace revolve {
 namespace gazebo {
@@ -25,10 +26,11 @@ public:
 
 	void FlipState();
 
-	std::string GetUniqueSocketId() const;
+	std::string GetSocketId() const;
 
 protected:
-	std::map<std::string, NeuralConnectionPtr> incomingConnections_;
+
+	std::vector<std::pair<std::string, NeuralConnectionPtr> > incomingConnections_;
 	double output_;
 	double newOutput_;
 
