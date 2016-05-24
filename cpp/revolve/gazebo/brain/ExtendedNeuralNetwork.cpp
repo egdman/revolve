@@ -28,6 +28,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
     responsePub_ = node_->Advertise<gz::msgs::Response>("~/"+modelName+"/modify_neural_network_response");
 
 
+
 	// Map neuron sdf elements to their id's
     std::map<std::string, sdf::ElementPtr> neuronDescriptions;
 
@@ -86,6 +87,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 
 		neuron = neuron->GetNextElement("rv:neuron");
 	}
+
 
 
 	// Add output neurons for motors:
@@ -202,8 +204,8 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 
 ExtendedNeuralNetwork::~ExtendedNeuralNetwork()
 {
-	delete inputs_;
-	delete outputs_;
+	delete [] inputs_;
+	delete [] outputs_;
 }
 
 
@@ -240,7 +242,6 @@ void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::
 
 NeuronPtr ExtendedNeuralNetwork::neuronHelper(sdf::ElementPtr neuron)
 {
-
 	if (!neuron->HasAttribute("type")) {
 		std::cerr << "Missing required `type` attribute for neuron." << std::endl;
 		throw std::runtime_error("Robot brain error");
@@ -294,7 +295,6 @@ NeuronPtr ExtendedNeuralNetwork::neuronHelper(sdf::ElementPtr neuron)
 }
 
 
-
 void ExtendedNeuralNetwork::update(const std::vector<MotorPtr>& motors,
 		const std::vector<SensorPtr>& sensors,
 		double t, double step) 
@@ -344,6 +344,17 @@ void ExtendedNeuralNetwork::update(const std::vector<MotorPtr>& motors,
 
 void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr & /*req*/)
 {
+	// boost::mutex::scoped_lock lock(networkMutex_);
+
+	// // delete all connections and hidden neurons
+	// this->flush();
+
+	// // Add new requested hidden neurons
+	// for (int i = 0; i < (unsigned int)req->add_hidden_size(); i++) {
+	// 	auto neuron = req->add_hidden(i);
+	// 	auto id = neuron.id();
+
+	// 	neuronHelper(neuron);
 
 }
 
