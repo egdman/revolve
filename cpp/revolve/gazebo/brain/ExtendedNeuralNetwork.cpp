@@ -21,11 +21,11 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
     // remember the name of the robot
     modelName_ = modelName;
 
- //  	// Listen to network modification requests
-	// alterSub_ = node_->Subscribe("~/"+modelName+"/modify_neural_network",
-	// 							 &ExtendedNeuralNetwork::modify, this);
+  	// Listen to network modification requests
+	alterSub_ = node_->Subscribe("~/"+modelName+"/modify_neural_network",
+								 &ExtendedNeuralNetwork::modify, this);
 
- //    responsePub_ = node_->Advertise<gz::msgs::Response>("~/"+modelName+"/modify_neural_network_response");
+    responsePub_ = node_->Advertise<gz::msgs::Response>("~/"+modelName+"/modify_neural_network_response");
 
 
 	// Map neuron sdf elements to their id's
@@ -45,6 +45,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 
 	// Get the first sdf neuron element
     auto neuron = node->HasElement("rv:neuron") ? node->GetElement("rv:neuron") : sdf::ElementPtr();
+
 
     while (neuron) {
 		if (!neuron->HasAttribute("layer") || !neuron->HasAttribute("id")) {
@@ -195,6 +196,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 		// Load the next connection
 		connection = connection->GetNextElement("rv:neural_connection");
 	}
+
 }
 
 
@@ -334,8 +336,10 @@ void ExtendedNeuralNetwork::update(const std::vector<MotorPtr>& motors,
 }
 
 
-void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr &req)
-{}
+void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr & /*req*/)
+{
+
+}
 
 
 }

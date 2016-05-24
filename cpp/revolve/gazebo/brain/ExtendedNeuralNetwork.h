@@ -61,7 +61,7 @@ protected:
 	std::string socket, double weight, const std::map<std::string, NeuronPtr> &idToNeuron);
 
 
-	void modify(ConstModifyNeuralNetworkPtr &req);
+	void modify(ConstModifyNeuralNetworkPtr &);
 
     /**
      * Name of the robot

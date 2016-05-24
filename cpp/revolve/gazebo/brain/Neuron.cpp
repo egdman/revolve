@@ -1,4 +1,5 @@
 #include "Neuron.h"
+#include <iostream>
 
 namespace revolve {
 namespace gazebo {
@@ -9,7 +10,7 @@ Neuron::Neuron()
 	this->newOutput_ = 0;
 }
 
-void Neuron::AddIncomingConnection(const std::string &socketName, const NeuralConnectionPtr &connection)
+void Neuron::AddIncomingConnection(const std::string &socketName, NeuralConnectionPtr connection)
 {
 	if (this->incomingConnections_.count(socketName)) {
 		std::cerr << "Neuron socket '" << socketName << "' is already used" << std::endl;
@@ -41,6 +42,7 @@ double Neuron::GetOutput() const
 std::string Neuron::GetUniqueSocketId() const
 {
 	int id = rand();
+
 	while (this->incomingConnections_.count(std::to_string(id))) {
 		id = rand();
 	}

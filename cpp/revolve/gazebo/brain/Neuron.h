@@ -15,7 +15,7 @@ public:
 	virtual ~Neuron() {};
 	virtual double CalculateOutput(double t) = 0;
 
-	void AddIncomingConnection(const std::string &socketName, const NeuralConnectionPtr &connection);
+	void AddIncomingConnection(const std::string &socketName, NeuralConnectionPtr connection);
 
 	double GetOutput() const;
 
