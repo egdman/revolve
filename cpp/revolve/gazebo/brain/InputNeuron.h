@@ -9,7 +9,8 @@ namespace gazebo {
 class InputNeuron : public Neuron
 {
 public:
-	InputNeuron(sdf::ElementPtr neuron);
+	// InputNeuron(sdf::ElementPtr neuron);
+	InputNeuron(const std::string &id, const std::map<std::string, double> &params);
 
 	virtual void SetInput(double value);
 	virtual double CalculateOutput(double t);

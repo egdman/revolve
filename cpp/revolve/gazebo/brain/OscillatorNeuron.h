@@ -10,7 +10,9 @@ namespace gazebo {
 class OscillatorNeuron : public Neuron
 {
 public:
-	OscillatorNeuron(sdf::ElementPtr neuron);
+	// OscillatorNeuron(sdf::ElementPtr neuron);
+	OscillatorNeuron(const std::string &id, const std::map<std::string, double> &params);
+	
 	virtual double CalculateOutput(double t);
 
 protected:

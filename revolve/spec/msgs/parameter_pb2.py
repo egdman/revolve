@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='parameter.proto',
   package='revolve.msgs',
-  serialized_pb='\n\x0fparameter.proto\x12\x0crevolve.msgs\"\x1a\n\tParameter\x12\r\n\x05value\x18\x01 \x02(\x01')
+  serialized_pb='\n\x0fparameter.proto\x12\x0crevolve.msgs\"(\n\tParameter\x12\r\n\x05value\x18\x01 \x02(\x01\x12\x0c\n\x04name\x18\x02 \x01(\t')
 
 
 
@@ -32,6 +32,13 @@ _PARAMETER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='name', full_name='revolve.msgs.Parameter.name', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -42,7 +49,7 @@ _PARAMETER = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=33,
-  serialized_end=59,
+  serialized_end=73,
 )
 
 DESCRIPTOR.message_types_by_name['Parameter'] = _PARAMETER

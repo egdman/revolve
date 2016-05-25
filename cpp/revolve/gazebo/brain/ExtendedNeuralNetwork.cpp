@@ -32,7 +32,8 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 	// Map neuron sdf elements to their id's
     std::map<std::string, sdf::ElementPtr> neuronDescriptions;
 
-    std::map<std::string, NeuronPtr> idToNeuron;
+    // // Map neuron id strings to Neuron objects
+    // std::map<std::string, NeuronPtr> idToNeuron;
 
 
 	// List of all hidden neuron id's
@@ -43,6 +44,9 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 
 	// Number of output neurons for mapping them to the output buffer
 	numOutputNeurons_ = 0;
+
+	// Number of hidden neurons
+	numHiddenNeurons_ = 0;
 
 	// Get the first sdf neuron element
     auto neuron = node->HasElement("rv:neuron") ? node->GetElement("rv:neuron") : sdf::ElementPtr();
@@ -117,7 +121,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 			}
 			
 			auto newNeuron = this->neuronHelper(neuronDescription->second);
-			idToNeuron[neuronId.str()] = newNeuron;
+			idToNeuron_[neuronId.str()] = newNeuron;
 			
 		}
 	}
@@ -151,7 +155,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 			}
 
 			auto newNeuron = this->neuronHelper(neuronDescription->second);
-			idToNeuron[neuronId.str()] = newNeuron;
+			idToNeuron_[neuronId.str()] = newNeuron;
 		}
 	}
 
@@ -164,7 +168,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 	for (auto it = hiddenIds.begin(); it != hiddenIds.end(); ++it) {
 		auto neuronDescription = neuronDescriptions.find(*it);
 		auto newNeuron = this->neuronHelper(neuronDescription->second);
-		idToNeuron[*it] = newNeuron;
+		idToNeuron_[*it] = newNeuron;
 	}
 
 
@@ -193,7 +197,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 		connection->GetAttribute("weight")->Get(weight);
 
 		// Use connection helper to set the weight
-		connectionHelper(src, dst, dstSocketName, weight, idToNeuron);
+		connectionHelper(src, dst, dstSocketName, weight, idToNeuron_);
 
 		// Load the next connection
 		connection = connection->GetNextElement("rv:neural_connection");
@@ -210,7 +214,7 @@ ExtendedNeuralNetwork::~ExtendedNeuralNetwork()
 
 
 void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::string &dst,
-	std::string socket, double weight, const std::map<std::string, NeuronPtr> &idToNeuron)
+	const std::string &socket, double weight, const std::map<std::string, NeuronPtr> &idToNeuron)
 {
 	auto srcNeuron = idToNeuron.find(src);
 	if (srcNeuron == idToNeuron.end()) {
@@ -223,11 +227,6 @@ void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::
 		std::cerr << "Could not find destination neuron '" << dst << "'" << std::endl;
 		throw std::runtime_error("Robot brain error");
 	}
-
-	if (socket == "None") {
-		socket = (dstNeuron->second)->GetSocketId();
-	}
-
 
 	NeuralConnectionPtr newConnection(new NeuralConnection(
 		srcNeuron->second,
@@ -247,13 +246,56 @@ NeuronPtr ExtendedNeuralNetwork::neuronHelper(sdf::ElementPtr neuron)
 		throw std::runtime_error("Robot brain error");
 	}
 
+	if (!neuron->HasAttribute("layer")) {
+		std::cerr << "Missing required `layer` attribute for neuron." << std::endl;
+		throw std::runtime_error("Robot brain error");
+	}
+
 	auto type = neuron->GetAttribute("type")->GetAsString();
 	auto layer = neuron->GetAttribute("layer")->GetAsString();
+	auto id = neuron->GetAttribute("id")->GetAsString();
 
+	// map <std::string, double> of parameter names and values
+	auto params = parseSDFElement(neuron);
+
+	return this->addNeuron(id, type, layer, params);
+}
+
+
+NeuronPtr ExtendedNeuralNetwork::neuronHelper(const revolve::msgs::Neuron & neuron)
+{
+	auto type = neuron.type();
+	auto layer = neuron.layer();
+	auto id = neuron.id();
+	std::map<std::string, double> params;
+	for (int i = 0; i < neuron.param_size(); ++i) {
+		auto param = neuron.param(i);
+
+		// ignore params without names
+		if (param.has_name()) {
+			auto paramVal = param.value();
+			auto paramName = param.name();
+			std::stringstream paramNameRevolve;
+			paramNameRevolve << "rv:" << paramName;
+			params[paramNameRevolve.str()] = paramVal;
+		}
+	}
+
+	return this->addNeuron(id, type, layer, params);
+}
+
+
+
+NeuronPtr ExtendedNeuralNetwork::addNeuron(
+	const std::string &neuronId,
+	const std::string &neuronType,
+	const std::string &neuronLayer,
+	const std::map<std::string, double> &params)
+{
 	NeuronPtr newNeuron;
 
-	if ("input" == layer) {
-		newNeuron.reset(new InputNeuron(neuron));
+	if ("input" == neuronLayer) {
+		newNeuron.reset(new InputNeuron(neuronId, params));
 
 		this->inputNeurons_.push_back(newNeuron);
 		inputPositionMap_[newNeuron] = numInputNeurons_;
@@ -262,32 +304,35 @@ NeuronPtr ExtendedNeuralNetwork::neuronHelper(sdf::ElementPtr neuron)
 
 	else {
 
-		if ("Sigmoid" == type) {
-			newNeuron.reset(new SigmoidNeuron(neuron));
+		if ("Sigmoid" == neuronType) {
+			newNeuron.reset(new SigmoidNeuron(neuronId, params));
 		}
-		else if ("Simple" == type) {
-			newNeuron.reset(new LinearNeuron(neuron));
+		else if ("Simple" == neuronType) {
+			newNeuron.reset(new LinearNeuron(neuronId, params));
 		}
-		else if ("Oscillator" == type) {
-			newNeuron.reset(new OscillatorNeuron(neuron));
+		else if ("Oscillator" == neuronType) {
+			newNeuron.reset(new OscillatorNeuron(neuronId, params));
 		}
-		else if ("V-Neuron" == type) {
-			newNeuron.reset(new VOscillator(neuron));
+		else if ("V-Neuron" == neuronType) {
+			newNeuron.reset(new VOscillator(neuronId, params));
 		}
-		else if ("X-Neuron" == type) {
-			newNeuron.reset(new XOscillator(neuron));
+		else if ("X-Neuron" == neuronType) {
+			newNeuron.reset(new XOscillator(neuronId, params));
 		}
 		else {
-			std::cerr << "Unsupported neuron type `" << type << '`' << std::endl;
+			std::cerr << "Unsupported neuron type `" << neuronType << '`' << std::endl;
 			throw std::runtime_error("Robot brain error");
 		}
 
-		if ("output" == layer) {
+		if ("output" == neuronLayer) {
 			this->outputNeurons_.push_back(newNeuron);
 			outputPositionMap_[newNeuron] = numOutputNeurons_;
 			numOutputNeurons_++;
 		}
-
+		else {
+			this->hiddenNeurons_.push_back(newNeuron);
+			numHiddenNeurons_++;
+		}
 	}
 
 	this->allNeurons_.push_back(newNeuron);
@@ -342,20 +387,99 @@ void ExtendedNeuralNetwork::update(const std::vector<MotorPtr>& motors,
 }
 
 
-void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr & /*req*/)
+
+void ExtendedNeuralNetwork::flush()
 {
-	// boost::mutex::scoped_lock lock(networkMutex_);
+	// Delete all references to incoming connections from neurons
+	for (auto it = allNeurons_.begin(); it != allNeurons_.end(); ++it) {
+		(*it)->DeleteIncomingConections();
+	}
 
-	// // delete all connections and hidden neurons
-	// this->flush();
+	// Delete all references to connections from the list
+	connections_.clear();
 
-	// // Add new requested hidden neurons
-	// for (int i = 0; i < (unsigned int)req->add_hidden_size(); i++) {
-	// 	auto neuron = req->add_hidden(i);
-	// 	auto id = neuron.id();
+	// Delete all hidden neurons from the id->neuron map
+	for (auto it = hiddenNeurons_.begin(); it != hiddenNeurons_.end(); ++it) {
+		auto hiddenId = (*it)->Id();
+		idToNeuron_.erase(hiddenId);
+	}
 
-	// 	neuronHelper(neuron);
+	// Delete all hidden neurons
+	// First delete all neurons
+	// Then re-add inout and output neurons
 
+	allNeurons_.clear();
+	hiddenNeurons_.clear();
+
+	for (auto it = inputNeurons_.begin(); it != inputNeurons_.end(); ++it) {
+		allNeurons_.push_back(*it);
+	}
+	for (auto it = outputNeurons_.begin(); it != outputNeurons_.end(); ++it) {
+		allNeurons_.push_back(*it);
+	}
+
+    numHiddenNeurons_ = 0;
+}
+
+
+
+void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr & req)
+{
+	boost::mutex::scoped_lock lock(networkMutex_);
+
+	// delete all connections and hidden neurons
+	this->flush();
+
+	// // Map neuron id strings to Neuron objects
+ //    std::map<std::string, NeuronPtr> idToNeuron;
+
+	// Add requested hidden neurons
+	for (int i = 0; i < req->add_hidden_size(); ++i) {
+		auto neuron = req->add_hidden(i);
+		auto id = neuron.id();
+
+		NeuronPtr newNeuron = neuronHelper(neuron);
+		idToNeuron_[id] = newNeuron;
+	}
+
+	// Add connections:
+	for (int i = 0; i < req->set_weights_size(); ++i) {
+		auto conn = req->set_weights(i);
+		auto src = conn.src();
+		auto dst = conn.dst();
+		auto weight = conn.weight();
+
+		std::string socket = "None";
+
+		if (conn.has_socket()) {
+			socket = conn.socket();
+		}
+
+		// Use connection helper to set the weight
+		connectionHelper(src, dst, socket, weight, idToNeuron_);
+	}
+
+	gz::msgs::Response resp;
+    resp.set_id(0);
+    resp.set_request("modify_neural_network");
+    resp.set_response(this->modelName_);
+    responsePub_->Publish(resp);
+}
+
+
+std::map<std::string, double> ExtendedNeuralNetwork::parseSDFElement(sdf::ElementPtr elem)
+{
+	std::map<std::string, double> params;
+
+	auto subElem = elem->GetFirstElement();
+	while (subElem) {
+		auto elName = subElem->GetName();
+		double elValue = subElem->Get<double>();
+		params[elName] = elValue;
+		subElem = subElem->GetNextElement();
+	}
+
+	return params;
 }
 
 

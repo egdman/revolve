@@ -10,7 +10,9 @@ namespace gazebo {
 class LinearNeuron : public Neuron
 {
 public:
-	LinearNeuron(sdf::ElementPtr neuron);
+	// LinearNeuron(sdf::ElementPtr neuron);
+	LinearNeuron(const std::string &id, const std::map<std::string, double> &params);
+	
 	virtual double CalculateOutput(double t);
 
 

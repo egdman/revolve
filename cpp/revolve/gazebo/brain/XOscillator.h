@@ -10,7 +10,9 @@ namespace gazebo {
 class XOscillator : public Neuron
 {
 public:
-	XOscillator(sdf::ElementPtr neuron);
+	// XOscillator(sdf::ElementPtr neuron);
+	XOscillator(const std::string &id, const std::map<std::string, double> &params);
+	
 	virtual double CalculateOutput(double t);
 
 

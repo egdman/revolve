@@ -3,14 +3,30 @@
 namespace revolve {
 namespace gazebo {
 
-XOscillator::XOscillator(sdf::ElementPtr neuron)
+// XOscillator::XOscillator(sdf::ElementPtr neuron)
+// {
+// 	auto type = neuron->GetAttribute("type")->GetAsString();
+// 	if (!neuron->HasElement("rv:tau")) {
+// 			std::cerr << "A `" << type << "` neuron requires `rv:tau` element." << std::endl;
+// 			throw std::runtime_error("Robot brain error");
+// 	}
+// 	this->tau_ = neuron->GetElement("rv:tau")->Get< double >();
+
+// 	this->lastTime_ = 0;
+// 	this->stateDeriv_ = 0;
+// }
+
+
+XOscillator::XOscillator(const std::string &id, const std::map<std::string, double> &params):
+Neuron(id)
 {
-	auto type = neuron->GetAttribute("type")->GetAsString();
-	if (!neuron->HasElement("rv:tau")) {
-			std::cerr << "A `" << type << "` neuron requires `rv:tau` element." << std::endl;
-			throw std::runtime_error("Robot brain error");
+	if (!params.count("rv:tau")) {
+		std::cerr << "A `" << "X-Oscillator" << 
+		"` neuron requires an `rv:tau` element." << std::endl;
+		throw std::runtime_error("Robot brain error");
 	}
-	this->tau_ = neuron->GetElement("rv:tau")->Get< double >();
+	
+	this->tau_ = params.find("rv:tau")->second;
 
 	this->lastTime_ = 0;
 	this->stateDeriv_ = 0;

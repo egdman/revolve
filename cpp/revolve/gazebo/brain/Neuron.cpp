@@ -4,15 +4,22 @@
 namespace revolve {
 namespace gazebo {
 
-Neuron::Neuron()
+Neuron::Neuron(const std::string &id)
 {
 	this->output_ = 0;
 	this->newOutput_ = 0;
+	this->id_ = id;
 }
 
 void Neuron::AddIncomingConnection(const std::string &socketName, NeuralConnectionPtr connection)
 {
 	this->incomingConnections_.push_back(std::pair<std::string, NeuralConnectionPtr>(socketName, connection));
+}
+
+
+void Neuron::DeleteIncomingConections()
+{
+	incomingConnections_.clear();
 }
 
 
@@ -37,6 +44,12 @@ double Neuron::GetOutput() const
 std::string Neuron::GetSocketId() const
 {
 	return std::to_string( this->incomingConnections_.size() );
+}
+
+
+const std::string & Neuron::Id() const
+{
+	return this->id_;
 }
 
 

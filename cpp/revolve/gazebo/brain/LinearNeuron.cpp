@@ -3,15 +3,33 @@
 namespace revolve {
 namespace gazebo {
 
-LinearNeuron::LinearNeuron(sdf::ElementPtr neuron)
+/* *
+ * Constructor from an sdf element
+ */
+// LinearNeuron::LinearNeuron(sdf::ElementPtr neuron)
+// {
+// 	auto type = neuron->GetAttribute("type")->GetAsString();
+// 	if (!neuron->HasElement("rv:bias") || !neuron->HasElement("rv:gain")) {
+// 		std::cerr << "A `" << type << "` neuron requires `rv:bias` and `rv:gain` elements." << std::endl;
+// 		throw std::runtime_error("Robot brain error");
+// 	}
+// 	this->bias_ = neuron->GetElement("rv:bias")->Get< double >();
+// 	this->gain_ = neuron->GetElement("rv:gain")->Get< double >();
+// }
+
+
+/* *
+ * Constructor from a map of parameter names and values
+ */
+LinearNeuron::LinearNeuron(const std::string &id, const std::map<std::string, double> &params):
+Neuron(id)
 {
-	auto type = neuron->GetAttribute("type")->GetAsString();
-	if (!neuron->HasElement("rv:bias") || !neuron->HasElement("rv:gain")) {
-			std::cerr << "A `" << type << "` neuron requires `rv:bias` and `rv:gain` elements." << std::endl;
-			throw std::runtime_error("Robot brain error");
+	if (!params.count("rv:bias") || !params.count("rv:gain")) {
+		std::cerr << "A `" << "Simple" << "` neuron requires `rv:bias` and `rv:gain` elements." << std::endl;
+		throw std::runtime_error("Robot brain error");
 	}
-	this->bias_ = neuron->GetElement("rv:bias")->Get< double >();
-	this->gain_ = neuron->GetElement("rv:gain")->Get< double >();
+	this->bias_ = params.find("rv:bias")->second;
+	this->gain_ = params.find("rv:gain")->second;
 }
 
 

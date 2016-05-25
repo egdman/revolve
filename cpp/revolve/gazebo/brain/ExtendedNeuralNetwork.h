@@ -58,13 +58,35 @@ protected:
 	::gazebo::transport::PublisherPtr responsePub_;
 
 
-	NeuronPtr neuronHelper(sdf::ElementPtr neuron);
+	/**
+	 * This function creates neurons and adds them to appropriate lists
+	 */
+	NeuronPtr addNeuron(
+		const std::string &neuronId,
+		const std::string &neuronType, 
+		const std::string &neuronLayer,
+		const std::map<std::string, double> &params);
+
+
+	std::map<std::string, double> parseSDFElement(sdf::ElementPtr elem);
+
+	NeuronPtr neuronHelper(sdf::ElementPtr);
+	NeuronPtr neuronHelper(const revolve::msgs::Neuron &);
 
 	void connectionHelper(const std::string &src, const std::string &dst,
-	std::string socket, double weight, const std::map<std::string, NeuronPtr> &idToNeuron);
+	const std::string &socket, double weight, const std::map<std::string, NeuronPtr> &idToNeuron);
+
+	/**
+	 * Delete all hidden neurons and all connections
+	 */
+	void flush();
 
 
+	/**
+	 * Add hidden neurons and connections from a protobuf message
+	 */
 	void modify(ConstModifyNeuralNetworkPtr &);
+
 
     /**
      * Name of the robot
@@ -78,14 +100,19 @@ protected:
     std::vector<NeuronPtr> allNeurons_;
 	std::vector<NeuronPtr> inputNeurons_;
 	std::vector<NeuronPtr> outputNeurons_;
+	std::vector<NeuronPtr> hiddenNeurons_;
 
 	std::map<NeuronPtr, int> outputPositionMap_;
 	std::map<NeuronPtr, int> inputPositionMap_;
+
+	// Map neuron id strings to Neuron objects
+	std::map<std::string, NeuronPtr> idToNeuron_;
 
     std::vector<NeuralConnectionPtr> connections_;
 
     int numInputNeurons_;
     int numOutputNeurons_;
+    int numHiddenNeurons_;
 
 };
 

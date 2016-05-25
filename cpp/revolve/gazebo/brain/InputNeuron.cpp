@@ -3,7 +3,14 @@
 namespace revolve {
 namespace gazebo {
 
-InputNeuron::InputNeuron(sdf::ElementPtr neuron)
+// InputNeuron::InputNeuron(sdf::ElementPtr neuron)
+// {
+// 	input_ = 0;
+// }
+
+
+InputNeuron::InputNeuron(const std::string &id, const std::map<std::string, double> &params):
+Neuron(id)
 {
 	input_ = 0;
 }

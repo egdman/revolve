@@ -1,18 +1,37 @@
 #include "VOscillator.h"
 
+
 namespace revolve {
 namespace gazebo {
 
-VOscillator::VOscillator(sdf::ElementPtr neuron)
+// VOscillator::VOscillator(sdf::ElementPtr neuron)
+// {
+// 	auto type = neuron->GetAttribute("type")->GetAsString();
+// 	if (!neuron->HasElement("rv:alpha") || !neuron->HasElement("rv:tau") || !neuron->HasElement("rv:energy")) {
+// 		std::cerr << "A `" << type << "` neuron requires `rv:alpha`, `rv:tau` and `rv:energy` elements." << std::endl;
+// 		throw std::runtime_error("Robot brain error");
+// 	}
+// 	this->alpha_ = neuron->GetElement("rv:alpha")->Get< double >();
+// 	this->tau_ = neuron->GetElement("rv:tau")->Get< double >();
+// 	this->energy_ = neuron->GetElement("rv:energy")->Get< double >();
+
+// 	this->lastTime_ = 0;
+// 	this->stateDeriv_ = 0;
+// }
+
+
+VOscillator::VOscillator(const std::string &id, const std::map<std::string, double> &params):
+Neuron(id)
 {
-	auto type = neuron->GetAttribute("type")->GetAsString();
-	if (!neuron->HasElement("rv:alpha") || !neuron->HasElement("rv:tau") || !neuron->HasElement("rv:energy")) {
-			std::cerr << "A `" << type << "` neuron requires `rv:alpha`, `rv:tau` and `rv:energy` elements." << std::endl;
-			throw std::runtime_error("Robot brain error");
+	if (!params.count("rv:alpha") || !params.count("rv:tau") || !params.count("rv:energy")) {
+		std::cerr << "A `" << "V-Oscillator" << 
+		"` neuron requires `rv:alpha`, `rv:tau` and `rv:energy` elements." << std::endl;
+		throw std::runtime_error("Robot brain error");
 	}
-	this->alpha_ = neuron->GetElement("rv:alpha")->Get< double >();
-	this->tau_ = neuron->GetElement("rv:tau")->Get< double >();
-	this->energy_ = neuron->GetElement("rv:energy")->Get< double >();
+	
+	this->alpha_ = params.find("rv:alpha")->second;
+	this->tau_ = params.find("rv:tau")->second;
+	this->energy_ = params.find("rv:energy")->second;
 
 	this->lastTime_ = 0;
 	this->stateDeriv_ = 0;

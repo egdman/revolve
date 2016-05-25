@@ -4,13 +4,16 @@
 #include "Neuron.h"
 #include "NeuralConnection.h"
 
+
 namespace revolve {
 namespace gazebo {
 
 class VOscillator : public Neuron
 {
 public:
-	VOscillator(sdf::ElementPtr neuron);
+	// VOscillator(sdf::ElementPtr neuron);
+	VOscillator(const std::string &id, const std::map<std::string, double> &params);
+	
 	virtual double CalculateOutput(double t);
 
 
