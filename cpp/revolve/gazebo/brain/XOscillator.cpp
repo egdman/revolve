@@ -3,19 +3,6 @@
 namespace revolve {
 namespace gazebo {
 
-// XOscillator::XOscillator(sdf::ElementPtr neuron)
-// {
-// 	auto type = neuron->GetAttribute("type")->GetAsString();
-// 	if (!neuron->HasElement("rv:tau")) {
-// 			std::cerr << "A `" << type << "` neuron requires `rv:tau` element." << std::endl;
-// 			throw std::runtime_error("Robot brain error");
-// 	}
-// 	this->tau_ = neuron->GetElement("rv:tau")->Get< double >();
-
-// 	this->lastTime_ = 0;
-// 	this->stateDeriv_ = 0;
-// }
-
 
 XOscillator::XOscillator(const std::string &id, const std::map<std::string, double> &params):
 Neuron(id)
@@ -38,6 +25,10 @@ double XOscillator::CalculateOutput(double t)
 	double deltaT = t - lastTime_;
 	lastTime_ = t;
 
+	if (deltaT > 0.1) {
+		deltaT = 0.1;
+	}
+
 	double vInput = 0;  // input from V-neuron of the same oscillator
 	double xInput = this->output_; // input from X-neuron of the same oscillator (this neuron)
 
@@ -53,7 +44,17 @@ double XOscillator::CalculateOutput(double t)
 
 	stateDeriv_ = vInput / tau_;
 
-	return xInput + deltaT * stateDeriv_;
+
+
+	double result = xInput + deltaT * stateDeriv_;
+	if (result > 1000.0) {
+		result = 1000.0;
+	}
+	if (result < -1000.0) {
+		result = -1000.0;
+	}
+
+	return result;
 }
 
 

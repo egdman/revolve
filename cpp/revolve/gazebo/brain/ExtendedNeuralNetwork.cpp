@@ -319,6 +319,12 @@ NeuronPtr ExtendedNeuralNetwork::addNeuron(
 		else if ("X-Neuron" == neuronType) {
 			newNeuron.reset(new XOscillator(neuronId, params));
 		}
+		else if ("Bias" == neuronType) {
+			newNeuron.reset(new BiasNeuron(neuronId, params));
+		}
+		else if ("Leaky" == neuronType) {
+			newNeuron.reset(new LeakyIntegrator(neuronId, params));
+		}
 		else {
 			std::cerr << "Unsupported neuron type `" << neuronType << '`' << std::endl;
 			throw std::runtime_error("Robot brain error");
@@ -371,13 +377,12 @@ void ExtendedNeuralNetwork::update(const std::vector<MotorPtr>& motors,
 		(*it)->FlipState();
 	}
 
-	// Write outputs to the output buffer:
 	for (auto it = outputNeurons_.begin(); it != outputNeurons_.end(); ++it) {
 		auto outNeuron = *it;
 		int pos = outputPositionMap_[outNeuron];
 		outputs_[pos] = outNeuron->GetOutput();
 	}
-	
+
 	// Send new signals to the motors
 	p = 0;
 	for (auto motor: motors) {
@@ -460,10 +465,10 @@ void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr & req)
 	}
 
 	gz::msgs::Response resp;
-    resp.set_id(0);
-    resp.set_request("modify_neural_network");
-    resp.set_response(this->modelName_);
-    responsePub_->Publish(resp);
+	resp.set_id(0);
+	resp.set_request("modify_neural_network");
+	resp.set_response(this->modelName_);
+	responsePub_->Publish(resp);
 }
 
 

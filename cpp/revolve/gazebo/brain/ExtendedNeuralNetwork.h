@@ -13,6 +13,8 @@
 #include "OscillatorNeuron.h"
 #include "VOscillator.h"
 #include "XOscillator.h"
+#include "LeakyIntegrator.h"
+#include "BiasNeuron.h"
 
 #include "InputNeuron.h"
 

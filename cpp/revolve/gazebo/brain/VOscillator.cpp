@@ -1,23 +1,9 @@
 #include "VOscillator.h"
+#include <cmath>
 
 
 namespace revolve {
 namespace gazebo {
-
-// VOscillator::VOscillator(sdf::ElementPtr neuron)
-// {
-// 	auto type = neuron->GetAttribute("type")->GetAsString();
-// 	if (!neuron->HasElement("rv:alpha") || !neuron->HasElement("rv:tau") || !neuron->HasElement("rv:energy")) {
-// 		std::cerr << "A `" << type << "` neuron requires `rv:alpha`, `rv:tau` and `rv:energy` elements." << std::endl;
-// 		throw std::runtime_error("Robot brain error");
-// 	}
-// 	this->alpha_ = neuron->GetElement("rv:alpha")->Get< double >();
-// 	this->tau_ = neuron->GetElement("rv:tau")->Get< double >();
-// 	this->energy_ = neuron->GetElement("rv:energy")->Get< double >();
-
-// 	this->lastTime_ = 0;
-// 	this->stateDeriv_ = 0;
-// }
 
 
 VOscillator::VOscillator(const std::string &id, const std::map<std::string, double> &params):
@@ -35,6 +21,7 @@ Neuron(id)
 
 	this->lastTime_ = 0;
 	this->stateDeriv_ = 0;
+	this->output_ = sqrt(this->energy_);
 }
 
 
@@ -42,6 +29,10 @@ double VOscillator::CalculateOutput(double t)
 {
 	double deltaT = t - lastTime_;
 	lastTime_ = t;
+
+	if (deltaT > 0.1) {
+		deltaT = 0.1;
+	}
 
 	double xInput = 0;  // input from X-neuron of the same oscillator
 	double vInput = this->output_; // input from V-neuron of the same oscillator (this neuron)
@@ -79,7 +70,16 @@ double VOscillator::CalculateOutput(double t)
 	stateDeriv_ = (- (alpha_ / energy_) * vInput * ( xInput*xInput + vInput*vInput )
 		+ alpha_ * vInput - xInput + xExternal + vExternal + otherInputs) / tau_;
 
-	return vInput + deltaT * stateDeriv_;
+	double result = vInput + deltaT * stateDeriv_;
+
+	if (result > 1000.0) {
+		result = 1000.0;
+	}
+	if (result < -1000.0) {
+		result = -1000.0;
+	}
+
+	return result;
 }
 
 

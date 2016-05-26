@@ -5,24 +5,6 @@ namespace revolve {
 namespace gazebo {
 
 /* *
- * Constructor from an sdf element
- */
-// OscillatorNeuron::OscillatorNeuron(sdf::ElementPtr neuron)
-// {
-// 	if (!neuron->HasElement("rv:period") || !neuron->HasElement("rv:phase_offset") ||
-// 				!neuron->HasElement("rv:amplitude")) {
-// 		std::cerr << "An `Oscillator` neuron requires `rv:period`, `rv:phase_offset` and `rv:amplitude` elements." << std::endl;
-// 		throw std::runtime_error("Robot brain error");
-// 	}
-
-// 		// Set period, phase offset and gain
-// 		this->period_ = neuron->GetElement("rv:period")->Get< double >();
-// 		this->phaseOffset_ = neuron->GetElement("rv:phase_offset")->Get< double >();
-// 		this->gain_ = neuron->GetElement("rv:amplitude")->Get< double >();
-// }
-
-
-/* *
  * Constructor from a map of parameter names and values
  */
 OscillatorNeuron::OscillatorNeuron(const std::string &id, const std::map<std::string, double> &params):

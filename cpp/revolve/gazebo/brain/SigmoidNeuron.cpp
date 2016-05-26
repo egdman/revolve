@@ -6,21 +6,6 @@ namespace gazebo {
 
 
 /* *
- * Constructor from an sdf element
- */
-// SigmoidNeuron::SigmoidNeuron(sdf::ElementPtr neuron)
-// {
-// 	auto type = neuron->GetAttribute("type")->GetAsString();
-// 	if (!neuron->HasElement("rv:bias") || !neuron->HasElement("rv:gain")) {
-// 		std::cerr << "A `" << type << "` neuron requires `rv:bias` and `rv:gain` elements." << std::endl;
-// 		throw std::runtime_error("Robot brain error");
-// 	}
-// 	this->bias_ = neuron->GetElement("rv:bias")->Get< double >();
-// 	this->gain_ = neuron->GetElement("rv:gain")->Get< double >();
-// }
-
-
-/* *
  * Constructor from a map of parameter names and values
  */
 SigmoidNeuron::SigmoidNeuron(const std::string &id, const std::map<std::string, double> &params):
