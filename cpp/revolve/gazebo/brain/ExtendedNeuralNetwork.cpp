@@ -325,6 +325,9 @@ NeuronPtr ExtendedNeuralNetwork::addNeuron(
 		else if ("Leaky" == neuronType) {
 			newNeuron.reset(new LeakyIntegrator(neuronId, params));
 		}
+		else if ("DifferentialCPG" == neuronType) {
+			newNeuron.reset(new DifferentialCPG(neuronId, params));
+		}
 		else {
 			std::cerr << "Unsupported neuron type `" << neuronType << '`' << std::endl;
 			throw std::runtime_error("Robot brain error");

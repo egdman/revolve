@@ -15,6 +15,7 @@
 #include "XOscillator.h"
 #include "LeakyIntegrator.h"
 #include "BiasNeuron.h"
+#include "DifferentialCPG.h"
 
 #include "InputNeuron.h"
 

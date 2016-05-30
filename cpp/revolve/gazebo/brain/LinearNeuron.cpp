@@ -1,4 +1,5 @@
 #include "LinearNeuron.h"
+#include <sstream>
 
 namespace revolve {
 namespace gazebo {
@@ -19,7 +20,7 @@ Neuron(id)
 }
 
 
-double LinearNeuron::CalculateOutput(double /*t*/)
+double LinearNeuron::CalculateOutput(double t)
 {
 	double inputValue = 0;
 
@@ -29,7 +30,24 @@ double LinearNeuron::CalculateOutput(double /*t*/)
 		inputValue += inConnection->GetInputNeuron()->GetOutput() * inConnection->GetWeight();
 	}
 
-	return this->gain_ * (inputValue - this->bias_);
+	double result = this->gain_ * (inputValue - this->bias_);
+
+	// limit output:
+	if (result > 10000.0) {
+		result = 10000.0;
+	}
+	else if (result < -10000.0) {
+		result = -10000.0;
+	}
+
+	// std::stringstream filename;
+	// filename << "/home/dmitry/projects/debug/out_neurons/" << Id() << ".log";
+	// std::ofstream logFile;
+	// logFile.open(filename.str(), std::ofstream::out | std::ofstream::app);
+	// logFile << t << "," << result << std::endl;
+	// logFile.close();
+
+	return result;
 }
 
 
