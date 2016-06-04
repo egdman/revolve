@@ -40,13 +40,19 @@ double DifferentialCPG::CalculateOutput(double t)
 	double state_deriv = inputValue - this->bias_;
 	double result = this->output_ + deltaT * state_deriv;
 
-	// limit output:
-	if (result > 10000.0) {
-		result = 10000.0;
-	}
-	else if (result < -10000.0) {
-		result = -10000.0;
-	}
+	double maxOut = 10000.0;
+
+	// // limit output:
+	// if (result > maxOut) {
+	// 	result = maxOut;
+	// }
+	// else if (result < -maxOut) {
+	// 	result = -maxOut;
+	// }
+
+	// saturate output:
+	double gain = 2.0 / maxOut;
+	result = (2.0 / (1.0 + exp(-result * gain)) - 1.0) * maxOut;
 
 	return result;
 }
