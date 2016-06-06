@@ -32,20 +32,14 @@ double LinearNeuron::CalculateOutput(double t)
 
 	double result = this->gain_ * (inputValue - this->bias_);
 
+	output_limit = 10000.0;
 	// limit output:
-	if (result > 10000.0) {
-		result = 10000.0;
+	if (result > output_limit) {
+		result = output_limit;
 	}
-	else if (result < -10000.0) {
-		result = -10000.0;
+	else if (result < -output_limit) {
+		result = -output_limit;
 	}
-
-	// std::stringstream filename;
-	// filename << "/home/dmitry/projects/debug/out_neurons/" << Id() << ".log";
-	// std::ofstream logFile;
-	// logFile.open(filename.str(), std::ofstream::out | std::ofstream::app);
-	// logFile << t << "," << result << std::endl;
-	// logFile.close();
 
 	return result;
 }
