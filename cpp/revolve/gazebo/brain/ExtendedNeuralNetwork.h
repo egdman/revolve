@@ -67,7 +67,7 @@ protected:
 	NeuronPtr addNeuron(
 		const std::string &neuronId,
 		const std::string &neuronType, 
-		const std::string &neuronLayer,
+		const std::string &neuronLayer, // can be 'hidden', 'input' or 'output'
 		const std::map<std::string, double> &params);
 
 
@@ -98,6 +98,8 @@ protected:
 
     // buffer of input values from the sensors
     double * inputs_;
+
+    // buffer of output values for the motors
     double * outputs_;
 
     std::vector<NeuronPtr> allNeurons_;
@@ -105,7 +107,10 @@ protected:
 	std::vector<NeuronPtr> outputNeurons_;
 	std::vector<NeuronPtr> hiddenNeurons_;
 
+	// positions for indexing into the outputs_ buffer for each output neuron
 	std::map<NeuronPtr, int> outputPositionMap_;
+
+	// positions for indexing into the inputs_ buffer for each input neuron
 	std::map<NeuronPtr, int> inputPositionMap_;
 
 	// Map neuron id strings to Neuron objects

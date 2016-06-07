@@ -32,8 +32,9 @@ double LeakyIntegrator::CalculateOutput(double t)
 		deltaT = 0.1;
 	}
 
-	double inputValue = 0;  // input from X-neuron of the same oscillator
+	double inputValue = 0;
 
+	// Calculate the input value
 	for (auto it = this->incomingConnections_.begin(); it != this->incomingConnections_.end(); ++it)
 	{
 		auto inConnection = it->second;
@@ -44,13 +45,6 @@ double LeakyIntegrator::CalculateOutput(double t)
 	state_ = state_ + deltaT * stateDeriv_;
 
 	double result = 1.0 / (1.0 + exp(state_ + bias_));
-
-	if (result > 1000.0) {
-		result = 1000.0;
-	}
-	if (result < -1000.0) {
-		result = -1000.0;
-	}
 
 	return result;
 }

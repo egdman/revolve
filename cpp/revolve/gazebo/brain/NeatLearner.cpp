@@ -39,8 +39,10 @@ NeatLearner::NeatLearner(std::string modelName, sdf::ElementPtr node,
     // initialize time to 0:
     this->currentTime_ = 0.0;
     this->lastTime_ = 0.0;
-    
+
+    // set initial state:
     this->currentState_ = WARMUP;
+
     // subscribe to pose updates:
     poseSub_ = node_->Subscribe("~/revolve/robot_poses",
 								 &NeatLearner::updatePose, this);
@@ -81,18 +83,20 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 		const std::vector<SensorPtr>& sensors,
 		double t, double step) 
 {
+	// Update the neural network state
 	this->controller_->update(motors, sensors, t, step);
 	
 	std::string stateName;
 	if (currentState_ == WARMUP) {
 		stateName = "WARMUP";
 
+		// Discard displacement during WARMUP
 		startPosition_[0] = position_[0];
 		startPosition_[1] = position_[1];
 		startPosition_[2] = position_[2];
 
 
-		// If warmup is over
+		// If warmup is over, switch to EVALUATE
 		if (currentTime_ - lastTime_ > WARMUP_TIME) {
 			lastTime_ = currentTime_;
 			currentState_ = EVALUATION;
@@ -102,7 +106,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 	if (currentState_ == EVALUATION) {
 		stateName = "EVALUATION";
 
-
+		//// Do nothing during EVALUATION, wait for the robot to move //////
 
 		// If evaluation is over
 		if (currentTime_ - lastTime_ > EVALUATION_TIME) {
@@ -118,12 +122,13 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 
 			std::cout << modelName_ << " FITNESS = " << fitness << std::endl;
 
-
+			////////// TODO /////////////
 			//// REMEMBER FITNESS ///////
+			/////// SHARE FITNESS ///////
 			//// IF ALL BRAINS EVALUATED, GENERATE NEW BRAINS (ALL THE NEAT THINGS HAPPEN HERE) ////
 			//// INSERT NEW BRAIN ///////
 
-
+			// Switch to WARMUP
 			lastTime_ = currentTime_;
 			currentState_ = WARMUP;
 		}
@@ -131,10 +136,6 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 	// std::cout << "time = " << currentTime_ << ", x=" << position_[0] << ", y=" << position_[1] << 
 	// ", state: " << stateName << std::endl;
 }
-
-
-
-
 
 
 }

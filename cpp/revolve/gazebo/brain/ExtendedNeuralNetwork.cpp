@@ -190,7 +190,7 @@ ExtendedNeuralNetwork::ExtendedNeuralNetwork(std::string modelName, sdf::Element
 			dstSocketName = connection->GetAttribute("socket")->GetAsString();
 		}
 		else {
-			dstSocketName = "None";
+			dstSocketName = "None"; // this is the default socket name
 		}
 
 		double weight;
@@ -233,6 +233,7 @@ void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::
 		weight
 	));
 
+	// Add reference to this connection to the destination neuron
 	(dstNeuron->second)->AddIncomingConnection(socket, newConnection);
 	connections_.push_back(newConnection);
 }
@@ -288,7 +289,7 @@ NeuronPtr ExtendedNeuralNetwork::neuronHelper(const revolve::msgs::Neuron & neur
 NeuronPtr ExtendedNeuralNetwork::addNeuron(
 	const std::string &neuronId,
 	const std::string &neuronType,
-	const std::string &neuronLayer,
+	const std::string &neuronLayer, // can be 'hidden', 'input' or 'output'
 	const std::map<std::string, double> &params)
 {
 	NeuronPtr newNeuron;
@@ -408,6 +409,7 @@ void ExtendedNeuralNetwork::flush()
 		(*it)->DeleteIncomingConections();
 	}
 
+	// Nullify the input and output signal buffers
 	for (int i = 0; i < numOutputNeurons_; ++i) {
 		outputs_[i] = 0;
 	}
@@ -427,7 +429,7 @@ void ExtendedNeuralNetwork::flush()
 
 	// Delete all hidden neurons
 	// First delete all neurons
-	// Then re-add inout and output neurons
+	// Then re-add input and output neurons
 
 	allNeurons_.clear();
 	hiddenNeurons_.clear();
@@ -461,23 +463,26 @@ void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr & req)
 		idToNeuron_[id] = newNeuron;
 	}
 
-	// Add connections:
+	// Add connections
 	for (int i = 0; i < req->set_weights_size(); ++i) {
 		auto conn = req->set_weights(i);
 		auto src = conn.src();
 		auto dst = conn.dst();
 		auto weight = conn.weight();
 
+		// Default socket name
 		std::string socket = "None";
 
+		// Set non-default socket name
 		if (conn.has_socket()) {
 			socket = conn.socket();
 		}
 
-		// Use connection helper to set the weight
+		// Use connection helper to add the connection
 		connectionHelper(src, dst, socket, weight, idToNeuron_);
 	}
 
+	// Publish success response (otherwise the sender will wait forever)
 	gz::msgs::Response resp;
 	resp.set_id(0);
 	resp.set_request("modify_neural_network");
