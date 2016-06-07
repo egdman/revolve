@@ -438,8 +438,6 @@ void ExtendedNeuralNetwork::modify(ConstModifyNeuralNetworkPtr & req)
 	// delete all connections and hidden neurons
 	this->flush();
 
-	// // Map neuron id strings to Neuron objects
- //    std::map<std::string, NeuronPtr> idToNeuron;
 
 	// Add requested hidden neurons
 	for (int i = 0; i < req->add_hidden_size(); ++i) {
