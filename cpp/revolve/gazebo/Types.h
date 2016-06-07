@@ -10,11 +10,13 @@ namespace gazebo {
 	class Brain;
 	class MotorFactory;
 	class SensorFactory;
+	class ExtendedNeuralNetwork;
 	
 	class Neuron;
 	class NeuralConnection;
 
 	typedef boost::shared_ptr< Brain > BrainPtr;
+	typedef boost::shared_ptr<ExtendedNeuralNetwork> NeuralNetworkPtr;
 	typedef boost::shared_ptr< Motor > MotorPtr;
 	typedef boost::shared_ptr< VirtualSensor > SensorPtr;
 	typedef boost::shared_ptr< MotorFactory > MotorFactoryPtr;

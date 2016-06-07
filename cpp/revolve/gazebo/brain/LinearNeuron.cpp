@@ -32,15 +32,6 @@ double LinearNeuron::CalculateOutput(double t)
 
 	double result = this->gain_ * (inputValue - this->bias_);
 
-	double output_limit = 10000.0;
-	// limit output:
-	if (result > output_limit) {
-		result = output_limit;
-	}
-	else if (result < -output_limit) {
-		result = -output_limit;
-	}
-
 	return result;
 }
 

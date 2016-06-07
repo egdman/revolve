@@ -221,7 +221,6 @@ void ExtendedNeuralNetwork::connectionHelper(const std::string &src, const std::
 		std::cerr << "Could not find source neuron '" << src << "'" << std::endl;
 		throw std::runtime_error("Robot brain error");
 	}
-
 	auto dstNeuron = idToNeuron.find(dst);
 	if (dstNeuron == idToNeuron.end()) {
 		std::cerr << "Could not find destination neuron '" << dst << "'" << std::endl;
@@ -380,12 +379,18 @@ void ExtendedNeuralNetwork::update(const std::vector<MotorPtr>& motors,
 		(*it)->FlipState();
 	}
 
+	// std::ofstream debF;
+	// debF.open("/home/dmitry/projects/debug/debug_signals", std::ofstream::out | std::ofstream::app);
 	for (auto it = outputNeurons_.begin(); it != outputNeurons_.end(); ++it) {
 		auto outNeuron = *it;
 		int pos = outputPositionMap_[outNeuron];
 		outputs_[pos] = outNeuron->GetOutput();
+
+		// debF << pos << "," << outputs_[pos] << std::endl;
 	}
 
+	// debF.close();
+	
 	// Send new signals to the motors
 	p = 0;
 	for (auto motor: motors) {
@@ -401,6 +406,14 @@ void ExtendedNeuralNetwork::flush()
 	// Delete all references to incoming connections from neurons
 	for (auto it = allNeurons_.begin(); it != allNeurons_.end(); ++it) {
 		(*it)->DeleteIncomingConections();
+	}
+
+	for (int i = 0; i < numOutputNeurons_; ++i) {
+		outputs_[i] = 0;
+	}
+
+	for (int i = 0; i < numInputNeurons_; ++i) {
+		inputs_[i] = 0;
 	}
 
 	// Delete all references to connections from the list
