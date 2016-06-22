@@ -8,6 +8,8 @@
 #include "ImuSensor.h"
 
 #include <iostream>
+#include <fstream>
+
 #include <stdexcept>
 
 namespace gz = gazebo;

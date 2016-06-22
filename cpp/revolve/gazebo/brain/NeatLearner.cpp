@@ -62,17 +62,17 @@ void NeatLearner::updatePose(const boost::shared_ptr<::gazebo::msgs::PosesStampe
 	for (int i = 0; i < msg->pose_size(); ++i) {
 		auto poseMsg = msg->pose(i);
 		auto name =	poseMsg.name();
-		auto position = poseMsg.position();
-
+		
 		if (name == this->modelName_) {
+			auto position = poseMsg.position();
 			this->position_[0] = position.x();
 			this->position_[1] = position.y();
 			this->position_[2] = position.z();
 		}
 	}
 	auto timeStamp = msg->time();
-	double seconds = (float)timeStamp.sec();
-	double nanoseconds = (float)timeStamp.nsec() / 1000000000.0;
+	double seconds = (double)timeStamp.sec();
+	double nanoseconds = (double)timeStamp.nsec() / 1000000000.0;
 	this->currentTime_ = seconds + nanoseconds;
 
 }
@@ -96,7 +96,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 		startPosition_[2] = position_[2];
 
 
-		// If warmup is over, switch to EVALUATE
+		// If WARMUP is over, switch to EVALUATION
 		if (currentTime_ - lastTime_ > WARMUP_TIME) {
 			lastTime_ = currentTime_;
 			currentState_ = EVALUATION;
