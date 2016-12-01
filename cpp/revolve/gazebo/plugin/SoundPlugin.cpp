@@ -17,6 +17,9 @@ GZ_REGISTER_STATIC_SENSOR("direction", DirectionSensorDummy)
 }
 
 
+
+
+
 namespace gz = gazebo;
 
 namespace revolve {
@@ -30,7 +33,7 @@ SoundPlugin::SoundPlugin():
 }
 
 
-void SoundPlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr _sdf)
+void SoundPlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/)
 {
 	// store the world
 	world_ = _parent;
@@ -112,7 +115,7 @@ void SoundPlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 				  ++it ) 
 			{
 				std::string name = it->first;
-				double frequency = it->second;
+				// double frequency = it->second;
 				gz::physics::ModelPtr model = world_->GetModel(name);
 				 
 				gz::msgs::Pose *poseMsg = msg.add_pose();
