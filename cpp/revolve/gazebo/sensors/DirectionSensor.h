@@ -1,5 +1,5 @@
-#ifndef REVOLVE_GAZEBO_SENSORS_SOUNDSENSOR_H_
-#define REVOLVE_GAZEBO_SENSORS_SOUNDSENSOR_H_
+#ifndef REVOLVE_GAZEBO_SENSORS_DIRECTION_SENSOR_H_
+#define REVOLVE_GAZEBO_SENSORS_DIRECTION_SENSOR_H_
 
 #include "Sensor.h"
 #include <gazebo/msgs/msgs.hh>
@@ -9,13 +9,13 @@ namespace revolve {
 namespace gazebo {
 	
 
-class SoundSensor : public Sensor
+class DirectionSensor : public Sensor
 {
 public:
-	SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sensor,
+	DirectionSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sensor,
 			std::string partId, std::string sensorId);
 			
-	virtual ~SoundSensor();
+	virtual ~DirectionSensor();
 	
 	/**
 	 * Read the value of this sensor into the
@@ -58,4 +58,4 @@ private:
 	
 
 
-#endif // REVOLVE_GAZEBO_SENSORS_SOUNDSENSOR_H_
+#endif // REVOLVE_GAZEBO_SENSORS_DIRECTION_SENSOR_H_

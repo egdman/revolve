@@ -15,9 +15,9 @@ namespace gazebo {
 	class Neuron;
 	class NeuralConnection;
 
-	class SoundSensor;
+	class DirectionSensor;
 
-	typedef boost::shared_ptr<SoundSensor> SoundSensorPtr;
+	typedef boost::shared_ptr<DirectionSensor> DirectionSensorPtr;
 	
 	typedef boost::shared_ptr< Brain > BrainPtr;
 	typedef boost::shared_ptr<ExtendedNeuralNetwork> NeuralNetworkPtr;

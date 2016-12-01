@@ -1,4 +1,4 @@
-#include "SoundSensor.h"
+#include "DirectionSensor.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -9,7 +9,7 @@ namespace gz = gazebo;
 namespace revolve {
 namespace gazebo {
 	
-SoundSensor::SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sensor,
+DirectionSensor::DirectionSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sensor,
 		std::string partId, std::string sensorId):
         Sensor(model, sensor, partId, sensorId, 1) // last parameter is the number of input neurons this sensor generates
 		
@@ -20,10 +20,10 @@ SoundSensor::SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sens
 	node_->Init();
 	
 	// subscribe to sound plugin messages
-    soundPluginSub_ =  node_->Subscribe("~/revolve/sound_source_poses", &SoundSensor::calculateOutput, this);
+    soundPluginSub_ =  node_->Subscribe("~/revolve/sound_source_poses", &DirectionSensor::calculateOutput, this);
 	
 	// connect to the update signal
-	this->updateConnection_ = this->sensor_->ConnectUpdated(boost::bind(&SoundSensor::OnUpdate, this));
+	this->updateConnection_ = this->sensor_->ConnectUpdated(boost::bind(&DirectionSensor::OnUpdate, this));
 
     // this is the relative pose of this sensor in the coordinate system of the parent link
     this->sensorPose_ = this->sensor_->GetPose();
@@ -47,14 +47,14 @@ SoundSensor::SoundSensor(::gazebo::physics::ModelPtr model, sdf::ElementPtr sens
 
 }
 
-SoundSensor::~SoundSensor() {}
+DirectionSensor::~DirectionSensor() {}
 
-void SoundSensor::OnUpdate()
+void DirectionSensor::OnUpdate()
 {
 	return;
 }
 
-void SoundSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &_msg)
+void DirectionSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &_msg)
 {
 	if (_msg->pose_size() <= 0) {
 		output_ = 0.0;
@@ -117,7 +117,7 @@ void SoundSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesS
 	}
 }
 
-void SoundSensor::read(double * input) {
+void DirectionSensor::read(double * input) {
 	input[0] = this->output_;
 }
 

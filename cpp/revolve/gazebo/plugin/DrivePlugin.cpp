@@ -1,5 +1,5 @@
 // revolve
-#include "SoundPlugin.h"
+#include "DrivePlugin.h"
 #include <revolve/gazebo/sensors/DirectionSensorDummy.h>
 
 // gazebo
@@ -26,14 +26,14 @@ namespace revolve {
 namespace gazebo {
 	
 	
-SoundPlugin::SoundPlugin():
+DrivePlugin::DrivePlugin():
 	soundSourcesPosePubFreq_(0),
 	lastPubTime_(0)
 {
 }
 
 
-void SoundPlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/)
+void DrivePlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/)
 {
 	// store the world
 	world_ = _parent;
@@ -42,7 +42,7 @@ void SoundPlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/
 	node_.reset(new gz::transport::Node());
 	node_->Init();
 
-	requestSub_ = node_->Subscribe("~/request", &SoundPlugin::OnRequest, this);
+	requestSub_ = node_->Subscribe("~/request", &DrivePlugin::OnRequest, this);
 	responsePub_ = node_->Advertise<gz::msgs::Response>("~/response");
 	
 	// sound source pose publisher
@@ -50,17 +50,17 @@ void SoundPlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/
 	
 	// Bind to the world update event to OnUpdate method
 	updateConnection_ = gz::event::Events::ConnectWorldUpdateBegin(
-			boost::bind(&SoundPlugin::OnUpdate, this, _1));
+			boost::bind(&DrivePlugin::OnUpdate, this, _1));
 	
 
 	// register 'DirectionSensorDummy' sensor type in gazebo
 	gz::sensors::RegisterDirectionSensorDummy();
 
 
-	std::cout << "Sound plugin loaded." << std::endl;
+	std::cout << "Drive plugin loaded." << std::endl;
 }
 
-void SoundPlugin::OnRequest(ConstRequestPtr & _msg)
+void DrivePlugin::OnRequest(ConstRequestPtr & _msg)
 {
 	if (_msg->request() == "set_sound_source_update_frequency") {
 		soundSourcesPosePubFreq_ = boost::lexical_cast<double>(_msg->data());
@@ -90,11 +90,11 @@ void SoundPlugin::OnRequest(ConstRequestPtr & _msg)
 		responsePub_->Publish(resp);
 		
 		// FOR DEBUG; this should be gone in the final version:
-		std::cout << "Sound source added: " << sourceName << ", frequency: " << frequency << std::endl;
+		std::cout << "Drive direction added: " << sourceName << ", frequency: " << frequency << std::endl;
 	}
 }
 
-void SoundPlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
+void DrivePlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 {
 	if (soundSourcesPosePubFreq_ == 0) {
 		return;

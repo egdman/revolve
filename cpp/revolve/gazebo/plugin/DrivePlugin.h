@@ -1,5 +1,5 @@
-#ifndef REVOLVE_SOUNDPLUGIN_H
-#define REVOLVE_SOUNDPLUGIN_H
+#ifndef REVOLVE_DRIVE_PLUGIN_H
+#define REVOLVE_DRIVE_PLUGIN_H
 
 
 
@@ -15,11 +15,11 @@
 namespace revolve {
 namespace gazebo {
 	
-class SoundPlugin : public ::gazebo::WorldPlugin {
+class DrivePlugin : public ::gazebo::WorldPlugin {
 public:
 
 	// constructor
-	SoundPlugin();
+	DrivePlugin();
 	
 	virtual void Load(::gazebo::physics::WorldPtr _parent, sdf::ElementPtr _sdf);
 	
@@ -68,6 +68,4 @@ protected:
 } // namespace revolve
 
 
-
-
-#endif // REVOLVE_SOUNDPLUGIN_H
+#endif // REVOLVE_DRIVE_PLUGIN_H
