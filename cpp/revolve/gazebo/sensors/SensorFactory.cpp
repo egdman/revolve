@@ -32,7 +32,7 @@ SensorPtr SensorFactory::getSensor(sdf::ElementPtr sensor,
 		out.reset(new LightSensor(this->model_, sensor, partId, sensorId));
 	} else if ("touch" == type) {
 		out.reset(new TouchSensor(this->model_, sensor, partId, sensorId));
-    } else if ("logical_camera" == type) {
+    } else if ("direction" == type) {
         out.reset(new SoundSensor(this->model_, sensor, partId, sensorId));
     }
 
