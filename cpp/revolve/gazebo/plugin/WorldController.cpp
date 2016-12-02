@@ -3,8 +3,20 @@
 //
 
 #include "WorldController.h"
+#include "revolve/gazebo/sensors/DirectionSensorDummy.h"
+
+#include "gazebo/sensors/SensorFactory.hh"
 
 #include <iostream>
+
+namespace gazebo{
+namespace sensors{
+// See this macro definition in "gazebo/sensors/SensorFactory.hh"
+GZ_REGISTER_STATIC_SENSOR("direction", DirectionSensorDummy)
+}
+}
+
+
 
 namespace gz = gazebo;
 
@@ -18,8 +30,6 @@ WorldController::WorldController():
 }
 
 void WorldController::Load(gz::physics::WorldPtr world, sdf::ElementPtr /*_sdf*/) {
-	std::cout << "World plugin loaded." << std::endl;
-
 	// Store the world
 	world_ = world;
 
@@ -49,6 +59,13 @@ void WorldController::Load(gz::physics::WorldPtr world, sdf::ElementPtr /*_sdf*/
 
 	// Robot pose publisher
 	robotPosesPub_ = node_->Advertise<gz::msgs::PosesStamped>("~/revolve/robot_poses", 50);
+
+
+	// register 'DirectionSensorDummy' sensor type in gazebo
+	gz::sensors::RegisterDirectionSensorDummy();
+
+
+	std::cout << "World plugin loaded." << std::endl;
 }
 
 void WorldController::OnUpdate(const ::gazebo::common::UpdateInfo &_info) {

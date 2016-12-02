@@ -13,6 +13,8 @@ class GAZEBO_VISIBLE DirectionSensorDummy : public Sensor
 	public: DirectionSensorDummy();
 
 	public: virtual ~DirectionSensorDummy();
+
+	protected: virtual bool UpdateImpl(bool /*_force*/) {return true;}
 };
 
 }

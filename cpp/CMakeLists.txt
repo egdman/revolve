@@ -143,7 +143,6 @@ file(GLOB_RECURSE
 	 revolve/gazebo/plugin/BodyAnalyzer.cpp
 	 revolve/gazebo/plugin/RobotController.cpp
 	 revolve/gazebo/plugin/WorldController.cpp
-   revolve/gazebo/plugin/DrivePlugin.cpp
 )
 
 # Create the library containing the Revolve API

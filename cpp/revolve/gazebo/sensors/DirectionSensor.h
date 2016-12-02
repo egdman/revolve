@@ -2,8 +2,10 @@
 #define REVOLVE_GAZEBO_SENSORS_DIRECTION_SENSOR_H_
 
 #include "Sensor.h"
+#include "DirectionSensorDummy.h"
+
 #include <gazebo/msgs/msgs.hh>
-#include "boost/shared_ptr.hpp"
+#include <boost/shared_ptr.hpp>
 
 namespace revolve {
 namespace gazebo {
@@ -26,9 +28,19 @@ public:
 	/**
 	 * Called when the sound sensor is updated
 	 */
-	void OnUpdate();
+	void OnUpdate(::gazebo::sensors::SensorPtr);
+
+
+	/**
+	 * Called when the drive direction is updated
+	 */
+	void OnDirUpdate(const boost::shared_ptr<::gazebo::msgs::Vector3d const> &_msg);
 	
+
 protected:
+
+	// Drive direction vector
+	::gazebo::math::Vector3 driveDirection_;
 
 	// Transport node
 	::gazebo::transport::NodePtr node_;
@@ -48,8 +60,12 @@ protected:
     // Pointer to the parent link
     ::gazebo::physics::LinkPtr linkPtr_;
 
-	// Calculate output value based on the position of the sensor and the positions of sound sources
-    virtual void calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &_msg);
+	// // Calculate output value based on the position of the sensor and the positions of sound sources
+ //    virtual void calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &_msg);
+
+    // Calculate output value based on the orientation of the sensor and the drive direction
+    virtual void calculateOutput();
+
 private:
 	double output_;
 };

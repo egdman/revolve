@@ -14,21 +14,35 @@ DirectionSensor::DirectionSensor(::gazebo::physics::ModelPtr model, sdf::Element
         Sensor(model, sensor, partId, sensorId, 1) // last parameter is the number of input neurons this sensor generates
 		
 {
+
+    this->sensor_ = boost::dynamic_pointer_cast<::gz::sensors::DirectionSensorDummy>(this->sensor_);
+    if (!this->sensor_)
+    {
+        auto errmsg = "DirectionSensor requires a DirectionSensorDummy as its parent.";
+        std::cerr << errmsg << std::endl;
+        throw std::invalid_argument(errmsg);
+    }
+    this->sensor_->SetActive(true);
+
 	this->output_ = 0.0;
 	// Create transport node
 	node_.reset(new gz::transport::Node());
 	node_->Init();
 	
 	// subscribe to sound plugin messages
-    soundPluginSub_ =  node_->Subscribe("~/revolve/sound_source_poses", &DirectionSensor::calculateOutput, this);
+    soundPluginSub_ = node_->Subscribe("~/revolve/drive_direction_update", &DirectionSensor::OnDirUpdate, this);
 	
 	// connect to the update signal
-	this->updateConnection_ = this->sensor_->ConnectUpdated(boost::bind(&DirectionSensor::OnUpdate, this));
+	this->updateConnection_ = this->sensor_->ConnectUpdated(
+        boost::bind(&DirectionSensor::OnUpdate, this, this->sensor_));
 
-    // this is the relative pose of this sensor in the coordinate system of the parent link
+    // this is the vector that represents the drive direction
+    this->driveDirection_ = ::gz::math::Vector3(0, 0, 0);
+
+    // this is the relative pose of this sensor in the coordinate system of the parent link (never changes)
     this->sensorPose_ = this->sensor_->GetPose();
 
-    // this is the sensor axis in the link coordinate system:
+    // this is the sensor axis in the link coordinate system (never changes)
     this->sensorAxis_ = this->sensorPose_.rot.RotateVector(::gz::math::Vector3(0, 0, 1));
 
     // name of the parent link
@@ -41,81 +55,45 @@ DirectionSensor::DirectionSensor(::gazebo::physics::ModelPtr model, sdf::Element
         errMes.append(parentLinkName);
         throw std::runtime_error(errMes);
     }
-
-
-
-
 }
 
 DirectionSensor::~DirectionSensor() {}
 
-void DirectionSensor::OnUpdate()
+
+void DirectionSensor::OnDirUpdate(const boost::shared_ptr<::gazebo::msgs::Vector3d const> &_msg)
 {
-	return;
+    this->driveDirection_.Set(_msg->x(), _msg->y(), _msg->z());
 }
 
-void DirectionSensor::calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &_msg)
+
+void DirectionSensor::OnUpdate(::gazebo::sensors::SensorPtr /*_parentSensor*/)
 {
-	if (_msg->pose_size() <= 0) {
-		output_ = 0.0;
-		return;
-	}
-	else {
-		std::vector<gz::math::Vector3> srcPositions;
-		for (int i = 0; i < _msg->pose_size(); ++i) {
-			gz::msgs::Pose poseMsg = _msg->pose(i);
-			gz::msgs::Vector3d position = poseMsg.position();
-			
-			srcPositions.push_back(gz::math::Vector3(position.x(), position.y(), position.z()));
-
-		}
-		
-        // this is the absolute pose of the parent link in the world coordinate system:
-        ::gz::math::Pose linkPose = this->linkPtr_->GetWorldCoGPose();
-
-        // this is the relative position of the sensor in the world coordinate system:
-        ::gz::math::Vector3 sensorRelPosRot = linkPose.rot.RotateVector((this->sensorPose_).pos);
-
-        // absolute position of the sensor in the world coordinate system:
-        ::gz::math::Vector3 sensorAbsPos = linkPose.pos + sensorRelPosRot;
-
-        // the sensor axis in the world coordinate system:
-        ::gz::math::Vector3 sensorAxis = linkPose.rot.RotateVector(this->sensorAxis_);
-
-//        // FOR DEBUG:
-//        std::cout << "link   pos = " << linkPose.pos.x << "," << linkPose.pos.y << "," << linkPose.pos.z << std::endl;
-//        std::cout << "sensor pos = " << sensorPose_.pos.x << "," << sensorPose_.pos.y << "," << sensorPose_.pos.z << std::endl;
-//        std::cout << "abs    pos = " << sensorAbsPos.x << "," << sensorAbsPos.y << "," << sensorAbsPos.z << std::endl;
-
-        // for now sensor orientation does not matter, this is temporary
-		output_ = 0.0;
-        for (unsigned int i = 0; i < srcPositions.size(); ++i) {
-			gz::math::Vector3 srcPos = srcPositions[i];
-            double dist = sensorAbsPos.Distance(srcPos);
-            ::gz::math::Vector3 sensorToSource = (srcPos - sensorAbsPos).Normalize();
-
-            double dot = sensorAxis.Dot(sensorToSource);
-
-//            // FOR DEBUG:
-//            std::cout << "dir  = " << sensorToSource.x << "," << sensorToSource.y << "," << sensorToSource.z << std::endl;
-//            std::cout << "axis = " << sensorAxis.x << "," << sensorAxis.y << "," << sensorAxis.z << std::endl;
-//            std::cout << "dot = " << dot << "\n" << std::endl;
-
-//            if (dot < 0) {
-//               dot = 0;
-//	      }
-
-
-			double distSq = dist * dist;
-//			double intensity = 1.0 / (distSq + 0.0001);
-            double intensity = 1.0;
-            output_ += intensity*dot;
-        }
-
-        // // FOR DEBUG:
-        // std::cout << "microphone " << this->sensorId() << " = " << this->output_ << std::endl;
-	}
+	this->calculateOutput();
 }
+
+
+void DirectionSensor::calculateOutput()
+{
+    // this is the absolute pose of the parent link in the world coordinate system:
+    ::gz::math::Pose linkPose = this->linkPtr_->GetWorldCoGPose();
+
+    // this is the sensor axis in the world coordinate system:
+    ::gz::math::Vector3 sensorAxis = linkPose.rot.RotateVector(this->sensorAxis_);
+
+    /// FOR DEBUG: //// ////
+    // std::cout << "sensorAxis: " << sensorAxis.x << "," << sensorAxis.y << "," << sensorAxis.z << std::endl;
+    //// //// //// //// ////
+
+    double dot = sensorAxis.Dot(this->driveDirection_);
+    if (dot < 0) { dot = 0; }
+
+    /// FOR DEBUG: //// ////
+    // std::cout << "output: " << dot << std::endl;
+    //// //// //// //// ////
+
+    this->output_ = dot;
+}
+
 
 void DirectionSensor::read(double * input) {
 	input[0] = this->output_;

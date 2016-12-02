@@ -62,9 +62,9 @@ void DrivePlugin::Load(::gz::physics::WorldPtr _parent, sdf::ElementPtr /*_sdf*/
 
 void DrivePlugin::OnRequest(ConstRequestPtr & _msg)
 {
-	if (_msg->request() == "set_sound_source_update_frequency") {
+	if (_msg->request() == "set_drive_update_frequency") {
 		soundSourcesPosePubFreq_ = boost::lexical_cast<double>(_msg->data());
-		std::cout << "Sound plugin: update frequency set to " << soundSourcesPosePubFreq_ << std::endl;
+		std::cout << "Drive plugin: update frequency set to " << soundSourcesPosePubFreq_ << std::endl;
 		
 		// publish response about successful handling:
 		gz::msgs::Response resp;
@@ -74,12 +74,12 @@ void DrivePlugin::OnRequest(ConstRequestPtr & _msg)
 		responsePub_->Publish(resp);
 		
 	}
-	else if (_msg->request() == "add_sound_source") {
-		double frequency = boost::lexical_cast<double>(_msg->dbl_data());
+	else if (_msg->request() == "add_drive_direction") {
+		double wavelen = boost::lexical_cast<double>(_msg->dbl_data());
 		std::string sourceName = _msg->data();
 		
 		sourceNamesMutex_.lock();
-		soundSourceNames_[sourceName] = frequency;
+		soundSourceNames_[sourceName] = wavelen;
 		sourceNamesMutex_.unlock();
 		
 		// publish response about successful handling:
@@ -90,7 +90,7 @@ void DrivePlugin::OnRequest(ConstRequestPtr & _msg)
 		responsePub_->Publish(resp);
 		
 		// FOR DEBUG; this should be gone in the final version:
-		std::cout << "Drive direction added: " << sourceName << ", frequency: " << frequency << std::endl;
+		std::cout << "Drive direction added: " << sourceName << ", wavelength: " << wavelen << std::endl;
 	}
 }
 
@@ -101,13 +101,13 @@ void DrivePlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 	}
 	double secs = 1.0 / soundSourcesPosePubFreq_;
 	double time = _info.simTime.Double();
-	
+
 
 	if ((time - lastPubTime_) >= secs) {
-		
+
 		gz::msgs::PosesStamped msg;
 		gz::msgs::Set(msg.mutable_time(), _info.simTime);
-			
+
 		sourceNamesMutex_.lock();
 		if (!soundSourceNames_.empty()) {
 			for ( std::map<std::string, double>::iterator it = soundSourceNames_.begin();
@@ -125,7 +125,7 @@ void DrivePlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 				gz::math::Pose modelPose = model->GetWorldPose();
 				// pose must be converted to an ignition::math::Pose3d object for some reason
 				gz::msgs::Set(poseMsg, modelPose.Ign());
-				
+
 //				// FOR DEBUG; this should be gone in the final version:
 //				std::cout << "time: " << time << ", source at: " << modelPose.pos.x << "," << modelPose.pos.y << "," << modelPose.pos.z << std::endl;
 			}
@@ -137,7 +137,7 @@ void DrivePlugin::OnUpdate(const ::gz::common::UpdateInfo &_info)
 			lastPubTime_ = time;
 		}
 	}
-	
+
 }
 
 } // namespace gazebo
