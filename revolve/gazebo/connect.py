@@ -15,6 +15,27 @@ def connect(address=default_address):
     raise Return(manager)
 
 
+
+class MessagePublisher(object):
+
+    @classmethod
+    @trollius.coroutine
+    def create(cls, manager, topic, msg_type):
+        self = cls()
+        self.publisher = yield From(manager.advertise(
+            topic,
+            msg_type
+        ))
+        raise Return(self)
+
+
+    @trollius.coroutine
+    def publish(self, msg):
+        yield From(self.publisher.publish(msg))
+
+
+
+
 class RequestHandler(object):
     """
     Utility class to send `Request` messages and accept
