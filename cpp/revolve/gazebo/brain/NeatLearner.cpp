@@ -49,6 +49,9 @@ NeatLearner::NeatLearner(std::string modelName, sdf::ElementPtr node,
 
     // initialize the controller:
     controller_.reset(new ExtendedNeuralNetwork(modelName_, node, motors, sensors));
+
+    // advertise topic for posting fitness evaluation results:
+    fitnessPub_ = node_->Advertise<gz::msgs::Request>("~/"+modelName+"/fitness");
  
 }
 
@@ -100,6 +103,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 		if (currentTime_ - lastTime_ > WARMUP_TIME) {
 			lastTime_ = currentTime_;
 			currentState_ = EVALUATION;
+			// std::cout << "Switch to: EVALUATION" << std::endl;
 		}
 	}
 
@@ -122,6 +126,13 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 
 			// std::cout << modelName_ << " FITNESS = " << fitness << std::endl;
 
+			// publish fitness value
+			gz::msgs::Request fit_msg;
+			fit_msg.set_id(0);
+			fit_msg.set_request(this->modelName_ + "$fitness");
+			fit_msg.set_dbl_data(fitness);
+			fitnessPub_->Publish(fit_msg);
+
 			////////// TODO /////////////
 			//// REMEMBER FITNESS ///////
 			/////// SHARE FITNESS ///////
@@ -131,6 +142,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 			// Switch to WARMUP
 			lastTime_ = currentTime_;
 			currentState_ = WARMUP;
+			// std::cout << "Switch to: WARMUP" << std::endl;
 		}
 	}
 	// std::cout << "time = " << currentTime_ << ", x=" << position_[0] << ", y=" << position_[1] << 

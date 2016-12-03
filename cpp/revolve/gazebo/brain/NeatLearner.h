@@ -49,6 +49,9 @@ protected:
 	// Subscriber to pose updates
 	::gazebo::transport::SubscriberPtr poseSub_;
 
+	// Publisher for posting fitness evaluation results
+	::gazebo::transport::PublisherPtr fitnessPub_;
+
 	// Name of the robot
     std::string modelName_;
 
