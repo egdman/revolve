@@ -120,7 +120,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 			double distanceCovered = sqrt(dx*dx + dy*dy);
 			double fitness = distanceCovered / (float)EVALUATION_TIME;
 
-			std::cout << modelName_ << " FITNESS = " << fitness << std::endl;
+			// std::cout << modelName_ << " FITNESS = " << fitness << std::endl;
 
 			////////// TODO /////////////
 			//// REMEMBER FITNESS ///////

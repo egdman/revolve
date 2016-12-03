@@ -62,6 +62,7 @@ DirectionSensor::~DirectionSensor() {}
 
 void DirectionSensor::OnDirUpdate(const boost::shared_ptr<::gazebo::msgs::Vector3d const> &_msg)
 {
+    // std::cout << "DRIVE DIR UPDATED: " << _msg->x() << ", " << _msg->y() << ", " << _msg->z() << std::endl;
     this->driveDirection_.Set(_msg->x(), _msg->y(), _msg->z());
 }
 

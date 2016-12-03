@@ -26,6 +26,8 @@ class MessagePublisher(object):
             topic,
             msg_type
         ))
+
+        yield From(self.publisher.wait_for_listener())
         raise Return(self)
 
 

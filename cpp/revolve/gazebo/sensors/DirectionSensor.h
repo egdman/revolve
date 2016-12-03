@@ -60,9 +60,6 @@ protected:
     // Pointer to the parent link
     ::gazebo::physics::LinkPtr linkPtr_;
 
-	// // Calculate output value based on the position of the sensor and the positions of sound sources
- //    virtual void calculateOutput(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &_msg);
-
     // Calculate output value based on the orientation of the sensor and the drive direction
     virtual void calculateOutput();
 

@@ -338,7 +338,7 @@ NeuronPtr ExtendedNeuralNetwork::addNeuron(
 			outputPositionMap_[newNeuron] = numOutputNeurons_;
 			numOutputNeurons_++;
 		}
-		else {
+		else { // if neuronLayer is 'hidden'
 			this->hiddenNeurons_.push_back(newNeuron);
 			numHiddenNeurons_++;
 		}
@@ -380,17 +380,13 @@ void ExtendedNeuralNetwork::update(const std::vector<MotorPtr>& motors,
 		(*it)->FlipState();
 	}
 
-	// std::ofstream debF;
-	// debF.open("/home/dmitry/projects/debug/debug_signals", std::ofstream::out | std::ofstream::app);
+
 	for (auto it = outputNeurons_.begin(); it != outputNeurons_.end(); ++it) {
 		auto outNeuron = *it;
 		int pos = outputPositionMap_[outNeuron];
 		outputs_[pos] = outNeuron->GetOutput();
-
-		// debF << pos << "," << outputs_[pos] << std::endl;
 	}
 
-	// debF.close();
 	
 	// Send new signals to the motors
 	p = 0;
