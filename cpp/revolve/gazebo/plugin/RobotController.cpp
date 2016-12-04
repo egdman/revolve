@@ -120,7 +120,18 @@ void RobotController::loadBrain(sdf::ElementPtr sdf) {
 	// brain_.reset(new ExtendedNeuralNetwork(this->model->GetName(), brain, motors_, sensors_));
 
 
+	// Use NEAT learner //// //// //// //// //// //// //// //// //// //// //// //// ////
 	brain_.reset(new NeatLearner(this->model->GetName(), brain, motors_, sensors_));
+	// set eval and warmup times
+	double eval_time = sdf->HasElement("rv:evaluation_time") ?
+		sdf->GetElement("rv:evaluation_time")->Get<double>() : 30.0;
+
+	double warmup_time = sdf->HasElement("rv:warmup_time") ?
+		sdf->GetElement("rv:warmup_time")->Get<double>() : 3.0;
+
+	auto neatLearnerPtr = boost::dynamic_pointer_cast<NeatLearner>(brain_);
+	neatLearnerPtr->SetDurations(eval_time, warmup_time);
+	//// //// //// //// //// //// //// //// //// //// //// //// //// //// //// //// ////
 
 	
 }

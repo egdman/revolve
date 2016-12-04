@@ -32,6 +32,8 @@ public:
 	virtual void update(const std::vector< MotorPtr > & motors, const std::vector< SensorPtr > & sensors,
 			double t, double step);
 
+	void SetDurations(double eval_duration, double warmup_duration);
+
 
 protected:
 
@@ -61,6 +63,10 @@ protected:
     // Time stamp
     double currentTime_;
     double lastTime_;
+
+    // Time settings
+    double evaluation_time_;
+    double warmup_time_;
 
     State currentState_;
 

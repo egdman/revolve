@@ -10,11 +10,11 @@ namespace gz = gazebo;
 namespace revolve {
 namespace gazebo {
 
-#define WARMUP_TIME 3
-#define EVALUATION_TIME 30
 
 NeatLearner::NeatLearner(std::string modelName, sdf::ElementPtr node,
-				  std::vector< MotorPtr > & motors, std::vector< SensorPtr > & sensors)
+				  std::vector< MotorPtr > & motors, std::vector< SensorPtr > & sensors):
+evaluation_time_(30.0),
+warmup_time_(3.0)
 {
 	
 	// Create transport node
@@ -60,6 +60,14 @@ NeatLearner::NeatLearner(std::string modelName, sdf::ElementPtr node,
 NeatLearner::~NeatLearner()
 {}
 
+
+void NeatLearner::SetDurations(double eval_duration, double warmup_duration)
+{
+	this->evaluation_time_ = eval_duration;
+	this->warmup_time_ = warmup_duration;
+}
+
+
 void NeatLearner::updatePose(const boost::shared_ptr<::gazebo::msgs::PosesStamped const> &msg)
 {
 	for (int i = 0; i < msg->pose_size(); ++i) {
@@ -100,7 +108,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 
 
 		// If WARMUP is over, switch to EVALUATION
-		if (currentTime_ - lastTime_ > WARMUP_TIME) {
+		if (currentTime_ - lastTime_ > this->warmup_time_) {
 			lastTime_ = currentTime_;
 			currentState_ = EVALUATION;
 			// std::cout << "Switch to: EVALUATION" << std::endl;
@@ -113,7 +121,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 		//// Do nothing during EVALUATION, wait for the robot to move //////
 
 		// If evaluation is over
-		if (currentTime_ - lastTime_ > EVALUATION_TIME) {
+		if (currentTime_ - lastTime_ > this->evaluation_time_) {
 
 
 			//// CALCULATE FITNESS //////
@@ -122,7 +130,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 			double dy = position_[1] - startPosition_[1];
 
 			double distanceCovered = sqrt(dx*dx + dy*dy);
-			double fitness = distanceCovered / (float)EVALUATION_TIME;
+			double fitness = distanceCovered / (float)(this->evaluation_time_);
 
 			// std::cout << modelName_ << " FITNESS = " << fitness << std::endl;
 
