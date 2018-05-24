@@ -97,7 +97,7 @@ else()
 endif()
 
 # Include the directory where the protobuf files will be placed
-include_directories(${PROTO_OUTPUT_BASE}/revolve)
+include_directories(${PROTO_OUTPUT_BASE} ${PROTO_OUTPUT_BASE}/revolve)
 
 message("gazebo proto path: ${GAZEBO_PROTO_PATH}")
 
