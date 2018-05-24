@@ -1,6 +1,8 @@
-from ..spec.msgs import Robot, BodyPart, NeuralConnection, BodyConnection
-from ..spec import BodyImplementation, NeuralNetImplementation, PartSpec, NeuronSpec
-from ..spec.exception import err
+from .msgs.robot_pb2 import Robot
+from .msgs.body_pb2 import BodyPart, BodyConnection
+from .msgs.neural_net_pb2 import NeuralConnection
+from .implementation import BodyImplementation, NeuralNetImplementation, PartSpec, NeuronSpec
+from .exception import err
 
 
 class Validator(object):

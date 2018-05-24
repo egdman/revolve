@@ -3,7 +3,7 @@
 from __future__ import absolute_import
 import yaml
 from ..spec import BodyImplementation, NeuralNetImplementation
-from ..spec.msgs import *
+from ..spec.msgs.robot_pb2 import Robot
 from .decode import BodyDecoder, NeuralNetworkDecoder
 from .proto_to_yaml import BodyEncoder, NeuralNetworkEncoder
 

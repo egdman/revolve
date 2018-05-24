@@ -2,8 +2,8 @@
 Body generation utilities,
 """
 import random
-from ..spec import BodyImplementation, PartSpec, BodyPart
-from ..spec.msgs import Body
+from ..spec import BodyImplementation, PartSpec
+from ..spec.msgs.body_pb2 import Body, BodyPart
 
 
 def _init_part_list(spec, parts):

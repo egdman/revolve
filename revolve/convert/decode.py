@@ -1,5 +1,6 @@
 from ..spec import BodyImplementation, NeuralNetImplementation
-from ..spec.msgs import Body, BodyPart, NeuralNetwork
+from ..spec.msgs.body_pb2 import Body, BodyPart
+from ..spec.msgs.neural_net_pb2 import NeuralNetwork
 from ..spec.exception import err
 
 
@@ -214,7 +215,7 @@ class NeuralNetworkDecoder(object):
                 if self.neurons[neuron_id]['layer'] == 'hidden':
                     err("Duplicate neuron ID '%s'" % neuron_id)
                 else:
-                    print "Warning: overriding neuron {0}".format(neuron_id)
+                    print ("Warning: overriding neuron {0}".format(neuron_id))
 
             # This sets the defaults, the accurate values - if present - will
             # be set by `_process_neuron_params`.

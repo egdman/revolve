@@ -1,5 +1,7 @@
 import copy
-from ..spec.msgs import Robot, BodyPart, Neuron, NeuralNetwork, Body
+from ..spec.msgs.robot_pb2 import Robot
+from ..spec.msgs.body_pb2 import BodyPart, Body
+from ..spec.msgs.neural_net_pb2 import Neuron, NeuralNetwork
 from ..spec import BodyImplementation
 
 

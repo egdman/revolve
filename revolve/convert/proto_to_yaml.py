@@ -1,5 +1,6 @@
 from ..spec import BodyImplementation, NeuralNetImplementation
-from ..spec.msgs import Body, BodyPart, NeuralNetwork
+from ..spec.msgs.body_pb2 import Body, BodyPart
+from ..spec.msgs.neural_net_pb2 import NeuralNetwork
 from ..spec.exception import err
 
 
