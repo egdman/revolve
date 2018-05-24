@@ -1,5 +1,5 @@
 package revolve.msgs;
-import "parameter.proto";
+import "msgs/parameter.proto";
 
 message NeuralConnection {
   required string src = 1;
@@ -21,9 +21,7 @@ message NeuralNetwork {
   repeated NeuralConnection connection = 2;
 }
 
-message ModifyNeuralNetwork {
-  repeated string remove_hidden = 1;
-  repeated Neuron add_hidden = 2;
-  repeated Neuron set_parameters = 4;
-  repeated NeuralConnection set_weights = 3;
+message SendNeuralNetwork {
+  required int32 id = 1;
+  required NeuralNetwork neuralNetwork = 2;
 }

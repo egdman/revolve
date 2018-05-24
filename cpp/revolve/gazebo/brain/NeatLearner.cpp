@@ -11,48 +11,33 @@ namespace revolve {
 namespace gazebo {
 
 
-NeatLearner::NeatLearner(std::string modelName, sdf::ElementPtr node,
-				  std::vector< MotorPtr > & motors, std::vector< SensorPtr > & sensors):
-evaluation_time_(30.0),
-warmup_time_(3.0)
+NeatLearner::NeatLearner(
+    std::string modelName,
+    sdf::ElementPtr node,
+    const std::vector<MotorPtr>& motors,
+    const std::vector<SensorPtr>& sensors)
+    : modelName_(modelName)
+    , evaluation_time_(30)
+    , warmup_time_(3)
+    , currentTime_(0)
+    , lastTime_(0)
+    , currentState_(State::WARMUP)
 {
-	
-	// Create transport node
-	node_.reset(new gz::transport::Node());
-	node_->Init();
+    // Create transport node for message passing
+    node_.reset(new gz::transport::Node());
+    node_->Init();
 
-    // remember the name of the robot
-    modelName_ = modelName;
-
-    // initialize current robot position to 0:
-    position_.resize(3);
-    position_[0] = 0.0;
-    position_[1] = 0.0;
-    position_[2] = 0.0;
-
-    // initialize starting position to 0:
-    startPosition_.resize(3);
-    startPosition_[0] = 0.0;
-    startPosition_[1] = 0.0;
-    startPosition_[2] = 0.0;
-
-    // initialize time to 0:
-    this->currentTime_ = 0.0;
-    this->lastTime_ = 0.0;
-
-    // set initial state:
-    this->currentState_ = WARMUP;
-
-    // subscribe to pose updates:
-    poseSub_ = node_->Subscribe("~/revolve/robot_poses",
-								 &NeatLearner::updatePose, this);
+    startPosition_[0] = startPosition_[1] = startPosition_[2] = 0.0;
+    position_[0] = position_[1] = position_[2] = 0;
 
     // initialize the controller:
     controller_.reset(new ExtendedNeuralNetwork(modelName_, node, motors, sensors));
 
+    // subscribe to pose updates:
+    poseSub_ = node_->Subscribe("~/revolve/robot_poses", &NeatLearner::updatePose, this);
+
     // advertise topic for posting fitness evaluation results:
     fitnessPub_ = node_->Advertise<gz::msgs::Request>("~/"+modelName+"/fitness");
- 
 }
 
 
@@ -98,7 +83,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 	this->controller_->update(motors, sensors, t, step);
 	
 	std::string stateName;
-	if (currentState_ == WARMUP) {
+	if (currentState_ == State::WARMUP) {
 		stateName = "WARMUP";
 
 		// Discard displacement during WARMUP
@@ -110,12 +95,12 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 		// If WARMUP is over, switch to EVALUATION
 		if (currentTime_ - lastTime_ > this->warmup_time_) {
 			lastTime_ = currentTime_;
-			currentState_ = EVALUATION;
+			currentState_ = State::EVALUATION;
 			// std::cout << "Switch to: EVALUATION" << std::endl;
 		}
 	}
 
-	if (currentState_ == EVALUATION) {
+	if (currentState_ == State::EVALUATION) {
 		stateName = "EVALUATION";
 
 		//// Do nothing during EVALUATION, wait for the robot to move //////
@@ -149,7 +134,7 @@ void NeatLearner::update(const std::vector<MotorPtr>& motors,
 
 			// Switch to WARMUP
 			lastTime_ = currentTime_;
-			currentState_ = WARMUP;
+			currentState_ = State::WARMUP;
 			// std::cout << "Switch to: WARMUP" << std::endl;
 		}
 	}

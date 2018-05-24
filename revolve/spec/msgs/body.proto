@@ -1,5 +1,5 @@
 package revolve.msgs;
-import "parameter.proto";
+import "msgs/parameter.proto";
 
 message BodyPart {
   required string id = 1;

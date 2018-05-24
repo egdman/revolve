@@ -24,8 +24,11 @@ enum State
 class NeatLearner : public Brain
 {
 public:
-	NeatLearner(std::string modelName, sdf::ElementPtr node,
-				  std::vector< MotorPtr > & motors, std::vector< SensorPtr > & sensors);
+	NeatLearner(
+		std::string modelName,
+		sdf::ElementPtr node,
+		const std::vector<MotorPtr>& motors,
+		const std::vector<SensorPtr>& sensors);
 
 	virtual ~NeatLearner();
 
@@ -57,8 +60,8 @@ protected:
 	// Name of the robot
     std::string modelName_;
 
-    std::vector<double> startPosition_;
-    std::vector<double> position_;
+    double startPosition_[3];
+    double position_[3];
 
     // Time stamp
     double currentTime_;
